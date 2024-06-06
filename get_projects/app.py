@@ -20,9 +20,9 @@ def lambda_handler(event, context):
     cursor.close()
     connection.close()
 
-    projecList = []
+    projec_list = []
     for project in projects:
-        projecList.append({
+        projec_list.append({
             "id_project": project[0],
             "name_project": project[1],
             "description": project[2],
@@ -31,5 +31,5 @@ def lambda_handler(event, context):
 
     return {
         "statusCode": 200,
-        "body": json.dumps(projecList),
+        "body": json.dumps(projec_list),
     }

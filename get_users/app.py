@@ -23,9 +23,9 @@ def get_users():
     users = cursor.fetchall()
     cursor.close()
     connection.close()
-    userList = []
+    user_list = []
     for user in users:
-        userList.append({
+        user_list.append({
             "id_user": user[0],
             "full_name": user[1],
             "email": user[2],
@@ -36,5 +36,5 @@ def get_users():
 
     return {
         "statusCode": 200,
-        "body": json.dumps(userList),
+        "body": json.dumps(user_list),
     }

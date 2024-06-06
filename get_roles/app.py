@@ -21,10 +21,10 @@ def get_roles():
     roles = cursor.fetchall()
     cursor.close()
     connection.close()
-    listRoles = []
+    list_roles = []
 
     for role in roles:
-        listRoles.append({
+        list_roles.append({
             "id_rol": role[0],
             "name": role[1],
             "active": role[2]
@@ -32,5 +32,5 @@ def get_roles():
 
     return {
         "statusCode": 200,
-        "body": json.dumps(listRoles),
+        "body": json.dumps(list_roles),
     }
