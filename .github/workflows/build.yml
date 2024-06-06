@@ -26,7 +26,7 @@ jobs:
           pip install -r requirements.txt
           cd ../get_projects
           pip install -r requirements.txt
-          cd ../get_projects_by_id
+          cd ../get_project_by_id
           pip install -r requirements.txt
           cd ../get_roles
           pip install -r requirements.txt
