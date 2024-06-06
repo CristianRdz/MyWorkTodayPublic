@@ -1,0 +1,534 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CoAutoBackend
+
+  Sample SAM Template for CoAuto_Backend
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaBasicExecution
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: SSMGetParameter
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: '*'
+              
+
+  ProjectApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: ProjectApi
+
+  InsertProjectFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${InsertProjectFunction}'
+      RetentionInDays: 14
+
+
+  InsertProjectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: insert_projects/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertProject:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProjectApi
+            Path: /insert_project
+            Method: post
+
+  DeleteProjectFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteProjectFunction}'
+      RetentionInDays: 14
+
+  DeleteProjectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete_projects/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        DeleteProject:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProjectApi
+            Path: /delete_project
+            Method: delete
+
+  GetProjectsFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetProjectsFunction}'
+      RetentionInDays: 14
+
+  GetProjectsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_projects/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetProjects:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProjectApi
+            Path: /get_projects
+            Method: get
+  GetProjectByIdFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetProjectByIdFunction}'
+      RetentionInDays: 14
+
+  GetProjectByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_projects/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetProjectById:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProjectApi
+            Path: /get_project_by_id
+            Method: get
+
+  UpdateProjectFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${UpdateProjectFunction}'
+      RetentionInDays: 14
+
+  UpdateProjectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update_projects/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        updateProject:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProjectApi
+            Path: /update_project
+            Method: put
+
+  RolesApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: RolesApi
+
+  InsertRoleFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${InsertRoleFunction}'
+      RetentionInDays: 14
+
+  InsertRoleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: insert_roles/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertRole:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RolesApi
+            Path: /insert_role
+            Method: post
+  DeleteRoleFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteRoleFunction}'
+      RetentionInDays: 14
+
+  DeleteRoleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete_roles/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        DeleteRole:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RolesApi
+            Path: /delete_role
+            Method: delete
+  UpdateRoleFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${UpdateRoleFunction}'
+      RetentionInDays: 14
+
+  UpdateRoleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update_roles/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        updateRole:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RolesApi
+            Path: /update_role
+            Method: put
+  GetRolesFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetRolesFunction}'
+      RetentionInDays: 14
+
+  GetRolesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_roles/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetRoles:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RolesApi
+            Path: /get_roles
+            Method: get
+
+  UsersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: UsersApi
+  InsertUserFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${InsertUserFunction}'
+      RetentionInDays: 14
+
+  InsertUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: insert_users/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UsersApi
+            Path: /insert_user
+            Method: post
+
+  DeleteUserFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteUserFunction}'
+      RetentionInDays: 14
+
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete_users/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        DeleteUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UsersApi
+            Path: /delete_user
+            Method: delete
+  UpdateUserFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${UpdateUserFunction}'
+      RetentionInDays: 14
+
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update_users/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        updateUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UsersApi
+            Path: /update_user
+            Method: put
+  GetUsersFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetUsersFunction}'
+      RetentionInDays: 14
+
+  GetUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_users/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetUsers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UsersApi
+            Path: /get_users
+            Method: get
+
+  TasksApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: TasksApi
+
+  InsertTaskFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${InsertTaskFunction}'
+      RetentionInDays: 14
+
+  InsertTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: insert_tasks/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TasksApi
+            Path: /insert_task
+            Method: post
+
+  DeleteTaskFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteTaskFunction}'
+      RetentionInDays: 14
+
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete_tasks/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        DeleteTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TasksApi
+            Path: /delete_task
+            Method: delete
+  UpdateTaskFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${UpdateTaskFunction}'
+      RetentionInDays: 14
+  UpdateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update_tasks/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        updateTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TasksApi
+            Path: /update_task
+            Method: put
+  GetTasksFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetTasksFunction}'
+      RetentionInDays: 14
+  GetTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_task_user/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetTasks:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TasksApi
+            Path: /get_tasks
+            Method: get
+  GetAllTasksFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllTasksFunction}'
+      RetentionInDays: 14
+  GetAllTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_all_task/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetAllTasks:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TasksApi
+            Path: /get_all_task
+            Method: get
+
+
+
+
+
+
+
+
+Outputs:
+  InsertProjectApiUrl:
+    Description: "API Gateway endpoint URL for InsertProjectFunction"
+    Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_project"
+  DeleteProjectApiUrl:
+    Description: "API Gateway endpoint URL for DeleteProjectFunction"
+    Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete_project"
+  GetProjectsApiUrl:
+    Description: "API Gateway endpoint URL for GetProjectsFunction"
+    Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_projects"
+  GetProjectByIdApiUrl:
+    Description: "API Gateway endpoint URL for GetProjectByIdFunction"
+    Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_project_by_id"
+  UpdateProjectApiUrl:
+    Description: "API Gateway endpoint URL for UpdateProjectFunction"
+    Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_project"
+  InsertRoleApiUrl:
+    Description: "API Gateway endpoint URL for InsertRoleFunction"
+    Value: !Sub "https://${RolesApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_role"
+  DeleteRoleApiUrl:
+    Description: "API Gateway endpoint URL for DeleteRoleFunction"
+    Value: !Sub "https://${RolesApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete_role"
+  UpdateRoleApiUrl:
+    Description: "API Gateway endpoint URL for UpdateRoleFunction"
+    Value: !Sub "https://${RolesApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_role"
+  GetRolesApiUrl:
+    Description: "API Gateway endpoint URL for GetRolesFunction"
+    Value: !Sub "https://${RolesApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_roles"
+  InsertUserApiUrl:
+    Description: "API Gateway endpoint URL for InsertUserFunction"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_user"
+  DeleteUserApiUrl:
+    Description: "API Gateway endpoint URL for DeleteUserFunction"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete_user"
+  UpdateUserApiUrl:
+    Description: "API Gateway endpoint URL for UpdateUserFunction"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_user"
+  GetUsersApiUrl:
+    Description: "API Gateway endpoint URL for GetUsersFunction"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_users"
+  InsertTaskApiUrl:
+    Description: "API Gateway endpoint URL for InsertTaskFunction"
+    Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_task"
+  DeleteTaskApiUrl:
+    Description: "API Gateway endpoint URL for DeleteTaskFunction"
+    Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/delete_task"
+  UpdateTaskApiUrl:
+    Description: "API Gateway endpoint URL for UpdateTaskFunction"
+    Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_task"
+  GetTasksApiUrl:
+    Description: "API Gateway endpoint URL for GetTasksFunction"
+    Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_tasks"
+  GetAllTasksApiUrl:
+    Description: "API Gateway endpoint URL for GetAllTasksFunction"
+    Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_all_task"
+  LambdaExecutionRoleArn:
+    Description: "Lambda Execution Role ARN"
+    Value: !GetAtt LambdaExecutionRole.Arn
