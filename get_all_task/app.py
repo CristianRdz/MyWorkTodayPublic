@@ -15,7 +15,13 @@ def lambda_handler(event, context):
      fk_project CHAR(36) NOT NULL
 
 """
-    return get_tasks()
+    try:
+        return get_tasks()
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
 
 
 

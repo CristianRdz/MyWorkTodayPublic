@@ -9,19 +9,25 @@ def lambda_handler(event, context):
      description TEXT ,
      active BOOLEAN NOT NULL
     """
-    event = json.loads(event['body'])
-    id_project = event['id_project']
-    name_project = event['name_project']
-    description = event['description']
-    active = event['active']
+    try:
+        event = json.loads(event['body'])
+        id_project = event['id_project']
+        name_project = event['name_project']
+        description = event['description']
+        active = event['active']
 
-    if not name_project:
+        if not name_project:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'name_project is required'})
+            }
+
+        return update_project(id_project, name_project, description, active)
+    except Exception as e:
         return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'name_project is required'})
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
         }
-
-    return update_project(id_project, name_project, description, active)
 
 
 def update_project(id_project, name_project, description, active):

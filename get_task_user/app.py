@@ -16,14 +16,25 @@ def lambda_handler(event, context):
      fk_project CHAR(36) NOT NULL
 
 """
-    # i will took the id_user from the path parameters
-    id_user = event["queryStringParameters"].get("id_user")
-    if not id_user and id_user.length() != 36:
+    try:
+        # i will took the id_user from the path parameters
+        id_user = event["queryStringParameters"].get("id_user")
+        if not id_user and id_user.length() != 36:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Invalid id_user'})
+            }
+        return get_tasks(id_user)
+    except KeyError:
         return {
             'statusCode': 400,
-            'body': json.dumps({'message': 'Invalid id_user'})
+            'body': json.dumps({'message': 'id_user is required and must be 36 characters'})
         }
-    return get_tasks(id_user)
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
 
 
 def get_tasks(id_user):

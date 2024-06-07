@@ -26,6 +26,11 @@ def lambda_handler(event, context):
             'statusCode': 400,
             'body': json.dumps({'message': 'id_user is required and must be a valid uuid'})
         }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
 
 
 def delete_user(id_user):

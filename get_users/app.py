@@ -13,7 +13,13 @@ def lambda_handler(event, context):
      fk_rol CHAR(36) NOT NULL
 
 """
-    return get_users()
+    try:
+        return get_users()
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
 
 
 def get_users():

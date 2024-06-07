@@ -10,21 +10,27 @@ def lambda_handler(event, context):
      description TEXT ,
      active BOOLEAN NOT NULL
     """
-    # generate a new uuid
-    event = json.loads(event['body'])
-    id_project = str(uuid.uuid4())
-    name_project = event['name_project']
-    description = event['description']
-    active = True
+    try:
+        # generate a new uuid
+        event = json.loads(event['body'])
+        id_project = str(uuid.uuid4())
+        name_project = event['name_project']
+        description = event['description']
+        active = True
 
-    if not name_project:
+        if not name_project:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'name_project is required'})
+            }
+
+        return insert_project(id_project, name_project, description, active)
+
+    except Exception as e:
         return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'name_project is required'})
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
         }
-
-    return insert_project(id_project, name_project, description, active)
-
 
 def insert_project(id_project, name_project, description, active):
     connection = get_connection()

@@ -11,7 +11,13 @@ def lambda_handler(event, context):
      active BOOLEAN NOT NULL
 
 """
-    return get_roles()
+    try:
+        return get_roles()
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
 
 
 def get_roles():

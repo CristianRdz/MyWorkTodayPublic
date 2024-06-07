@@ -13,23 +13,29 @@ def lambda_handler(event, context):
     ----------
 
 """
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM projects WHERE active = 1 ORDER BY name_project")
-    projects = cursor.fetchall()
-    cursor.close()
-    connection.close()
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM projects WHERE active = 1 ORDER BY name_project")
+        projects = cursor.fetchall()
+        cursor.close()
+        connection.close()
 
-    projec_list = []
-    for project in projects:
-        projec_list.append({
-            "id_project": project[0],
-            "name_project": project[1],
-            "description": project[2],
-            "active": project[3]
-        })
+        projec_list = []
+        for project in projects:
+            projec_list.append({
+                "id_project": project[0],
+                "name_project": project[1],
+                "description": project[2],
+                "active": project[3]
+            })
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(projec_list),
-    }
+        return {
+            "statusCode": 200,
+            "body": json.dumps(projec_list),
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }

@@ -13,13 +13,19 @@ def lambda_handler(event, context):
     ----------
        """
      # i will took the id_project from the url
-    id_project = event["queryStringParameters"]["id_project"]
-    if not id_project and id_project.length() != 36:
+    try:
+        id_project = event["queryStringParameters"]["id_project"]
+        if not id_project and id_project.length() != 36:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'id_project is required and must be a valid uuid'})
+            }
+        return delete_project(id_project)
+    except Exception as e:
         return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'id_project is required and must be a valid uuid'})
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
         }
-    return delete_project(id_project)
 
 
 def delete_project(id_project):

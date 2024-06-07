@@ -29,6 +29,11 @@ def lambda_handler(event, context):
             'statusCode': 400,
             'body': json.dumps({'message': 'id_task is required and must be 36 characters'})
         }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
 
 
 def delete_task(id_task):

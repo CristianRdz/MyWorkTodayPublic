@@ -10,18 +10,24 @@ def lambda_handler(event, context):
      active BOOLEAN NOT NULL
     """
     # generate a new uuid
-    event = json.loads(event['body'])
-    id_rol = str(uuid.uuid4())
-    name = event['name']
-    active = True
+    try:
+        event = json.loads(event['body'])
+        id_rol = str(uuid.uuid4())
+        name = event['name']
+        active = True
 
-    if not name:
+        if not name:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'name is required'})
+            }
+
+        return insert_role(id_rol, name, active)
+    except Exception as e:
         return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'name is required'})
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
         }
-
-    return insert_role(id_rol, name, active)
 
 
 def insert_role(id_rol, name, active):
