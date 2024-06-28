@@ -23,7 +23,7 @@ def lambda_handler(event, context):
         id_user = str(uuid.uuid4())
         full_name = event['full_name']
         email = event['email']
-        password = event['password']
+        password = generate_temporary_password()
         active = True
         fk_rol = event['fk_rol']
         role = "Users"

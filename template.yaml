@@ -318,7 +318,7 @@ Resources:
       StageName: Prod
       Name: RolesApi
       Auth:
-        DefaultAuthorizer: MyR
+        DefaultAuthorizer: RolesAuthorizer
         Authorizers:
           RolesAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
