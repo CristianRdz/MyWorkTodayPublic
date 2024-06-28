@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 
 def lambda_handler(event, __):
     client = boto3.client('cognito-idp', region_name='us-east-1')
-    client_id = "5sp9tb0kjbns6i3q0mft48ff9s"
+    client_id = "5b1dbhgjv97slqctphs8gbkqr5"
 
     try:
         body_parameters = json.loads(event["body"])
@@ -28,7 +28,7 @@ def lambda_handler(event, __):
         # Obtén los grupos del usuario
         user_groups = client.admin_list_groups_for_user(
             Username=username,
-            UserPoolId='us-east-1_fphbv2F4J'  # Reemplaza con tu User Pool ID
+            UserPoolId='us-east-1_GzEBbhwsw'  # Reemplaza con tu User Pool ID
         )
 
         # Determina el rol basado en el grupo
