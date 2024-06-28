@@ -462,6 +462,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Architectures:
         - x86_64
+      Timeout: 30
       Events:
         InsertUser:
           Type: Api
