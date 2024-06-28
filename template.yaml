@@ -39,6 +39,14 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: 'arn:aws:secretsmanager:us-east-1:*'
+        - PolicyName: CognitoAdminInitiateAuth
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cognito-idp:AdminInitiateAuth
+                Resource: 'arn:aws:cognito-idp:us-east-1:*:*'
 
   MyCognitoUserPool:
     Type: AWS::Cognito::UserPool
