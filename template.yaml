@@ -153,6 +153,52 @@ Resources:
             RestApiId: !Ref AuthApi
             Path: /set_password
             Method: post
+  ForgotPasswordFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ForgotPasswordFunction}'
+      RetentionInDays: 14
+
+  ForgotPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: forgot_password/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        ForgotPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AuthApi
+            Path: /forgot_password
+            Method: post
+
+  ConfirmPasswordFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ConfirmPasswordFunction}'
+      RetentionInDays: 14
+
+  ConfirmPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: confirm_password/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        ConfirmPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AuthApi
+            Path: /confirm_password
+            Method: post
+
 
   ProjectAuthorizer:
     Type: AWS::ApiGateway::Authorizer
@@ -753,6 +799,14 @@ Outputs:
   SetPasswordApiUrl:
     Description: "API Gateway endpoint URL for SetPasswordFunction"
     Value: !Sub "https://${AuthApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/set_password"
+
+  ForgotPasswordApiUrl:
+    Description: "API Gateway endpoint URL for ForgotPasswordFunction"
+    Value: !Sub "https://${AuthApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/forgot_password"
+
+  ConfirmPasswordApiUrl:
+    Description: "API Gateway endpoint URL for ConfirmPasswordFunction"
+    Value: !Sub "https://${AuthApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/confirm_password"
 
   LambdaExecutionRoleArn:
     Description: "Lambda Execution Role ARN"

@@ -56,6 +56,15 @@ jobs:
           pip install -r requirements.txt
           cd ../update_users
           pip install -r requirements.txt
+          cd ../login
+          pip install -r requirements.txt
+          cd ../set_password
+          pip install -r requirements.txt
+          cd ../forgot_password
+          pip install -r requirements.txt
+          cd ../confirm_password
+          pip install -r requirements.txt
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
