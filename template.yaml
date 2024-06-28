@@ -199,7 +199,7 @@ Resources:
             Path: /insert_project
             Method: post
             Auth:
-              Authorizer: !Ref ProjectAuthorizer
+              Authorizer: ProjectAuthorizer
 
   DeleteProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -224,7 +224,7 @@ Resources:
             Path: /delete_project
             Method: delete
             Auth:
-             Authorizer: !Ref ProjectAuthorizer
+             Authorizer: ProjectAuthorizer
 
   GetProjectsFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -249,7 +249,7 @@ Resources:
             Path: /get_projects
             Method: get
             Auth:
-              Authorizer: !Ref ProjectAuthorizer
+              Authorizer: ProjectAuthorizer
 
   GetProjectByIdFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -274,7 +274,7 @@ Resources:
             Path: /get_project_by_id
             Method: get
             Auth:
-              Authorizer: !Ref ProjectAuthorizer
+              Authorizer: ProjectAuthorizer
 
   UpdateProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -299,7 +299,7 @@ Resources:
             Path: /update_project
             Method: put
             Auth:
-              Authorizer: !Ref ProjectAuthorizer
+              Authorizer: ProjectAuthorizer
 
 
   RolesAuthorizer:
@@ -347,7 +347,7 @@ Resources:
             Path: /insert_role
             Method: post
             Auth:
-              Authorizer: !Ref RolesAuthorizer
+              Authorizer: RolesAuthorizer
 
 
 
@@ -374,7 +374,7 @@ Resources:
             Path: /delete_role
             Method: delete
             Auth:
-              Authorizer: !Ref RolesAuthorizer
+              Authorizer: RolesAuthorizer
 
   UpdateRoleFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -399,7 +399,7 @@ Resources:
             Path: /update_role
             Method: put
             Auth:
-              Authorizer: !Ref RolesAuthorizer
+              Authorizer: RolesAuthorizer
 
   GetRolesFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -424,7 +424,7 @@ Resources:
             Path: /get_roles
             Method: get
             Auth:
-              Authorizer: !Ref RolesAuthorizer
+              Authorizer: RolesAuthorizer
 
   UsersAuthorizer:
     Type: AWS::ApiGateway::Authorizer
@@ -493,7 +493,7 @@ Resources:
             Path: /delete_user
             Method: delete
             Auth:
-                Authorizer: !Ref UsersAuthorizer
+                Authorizer: UsersAuthorizer
 
   UpdateUserFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -518,7 +518,7 @@ Resources:
             Path: /update_user
             Method: put
             Auth:
-              Authorizer: !Ref UsersAuthorizer
+              Authorizer: UsersAuthorizer
   GetUsersFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -542,7 +542,7 @@ Resources:
             Path: /get_users
             Method: get
             Auth:
-              Authorizer: !Ref UsersAuthorizer
+              Authorizer: UsersAuthorizer
 
   TasksAuthorizer:
     Type: AWS::ApiGateway::Authorizer
@@ -588,7 +588,7 @@ Resources:
             Path: /insert_task
             Method: post
             Auth:
-              Authorizer: !Ref TasksAuthorizer
+              Authorizer: TasksAuthorizer
 
   DeleteTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -613,7 +613,7 @@ Resources:
             Path: /delete_task
             Method: delete
             Auth:
-              Authorizer: !Ref TasksAuthorizer
+              Authorizer: TasksAuthorizer
 
   UpdateTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -638,7 +638,7 @@ Resources:
             Path: /update_task
             Method: put
             Auth:
-              Authorizer: !Ref TasksAuthorizer
+              Authorizer: TasksAuthorizer
 
   GetTasksFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -663,7 +663,7 @@ Resources:
             Path: /get_tasks
             Method: get
             Auth:
-              Authorizer: !Ref TasksAuthorizer
+              Authorizer: TasksAuthorizer
 
   GetAllTasksFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -688,7 +688,7 @@ Resources:
             Path: /get_all_task
             Method: get
             Auth:
-              Authorizer: !Ref TasksAuthorizer
+              Authorizer: TasksAuthorizer
 Outputs:
   InsertProjectApiUrl:
     Description: "API Gateway endpoint URL for InsertProjectFunction"
