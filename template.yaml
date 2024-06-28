@@ -98,15 +98,7 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       Precedence: 2
 
-  MyApiGatewayAuthorizer:
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      Name: MyCognitoAuthorizer
-      IdentitySource: method.request.header.Authorization
-      RestApiId: !Ref ProjectApi
-      Type: COGNITO_USER_POOLS
-      ProviderARNs:
-        - !GetAtt MyCognitoUserPool.Arn
+
 
 
   AuthApi:
@@ -162,15 +154,25 @@ Resources:
             Path: /set_password
             Method: post
 
+  ProjectAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: ProjectAuthorizer
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref ProjectApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - !GetAtt MyCognitoUserPool.Arn
+
   ProjectApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       Name: ProjectApi
       Auth:
-        DefaultAuthorizer: MyApiGatewayAuthorizer
+        DefaultAuthorizer: ProjectAuthorizer
         Authorizers:
-          MyApiGatewayAuthorizer:
+          ProjectAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
   InsertProjectFunctionLogGroup:
@@ -197,7 +199,7 @@ Resources:
             Path: /insert_project
             Method: post
             Auth:
-              Authorizer: MyApiGatewayAuthorizer
+              Authorizer: ProjectAuthorizer
 
   DeleteProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -221,6 +223,8 @@ Resources:
             RestApiId: !Ref ProjectApi
             Path: /delete_project
             Method: delete
+            Auth:
+             Authorizer: ProjectAuthorizer
 
   GetProjectsFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -244,6 +248,9 @@ Resources:
             RestApiId: !Ref ProjectApi
             Path: /get_projects
             Method: get
+            Auth:
+              Authorizer: ProjectAuthorizer
+
   GetProjectByIdFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -266,6 +273,8 @@ Resources:
             RestApiId: !Ref ProjectApi
             Path: /get_project_by_id
             Method: get
+            Auth:
+              Authorizer: ProjectAuthorizer
 
   UpdateProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -289,12 +298,31 @@ Resources:
             RestApiId: !Ref ProjectApi
             Path: /update_project
             Method: put
+            Auth:
+              Authorizer: ProjectAuthorizer
+
+
+  RolesAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: RolesAuthorizer
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref RolesApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - !GetAtt MyCognitoUserPool.Arn
 
   RolesApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       Name: RolesApi
+      Auth:
+        DefaultAuthorizer: MyR
+        Authorizers:
+          RolesAuthorizer:
+            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+
 
   InsertRoleFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -318,6 +346,11 @@ Resources:
             RestApiId: !Ref RolesApi
             Path: /insert_role
             Method: post
+            Auth:
+              Authorizer: RolesAuthorizer
+
+
+
   DeleteRoleFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -340,6 +373,9 @@ Resources:
             RestApiId: !Ref RolesApi
             Path: /delete_role
             Method: delete
+            Auth:
+              Authorizer: RolesAuthorizer
+
   UpdateRoleFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -362,6 +398,9 @@ Resources:
             RestApiId: !Ref RolesApi
             Path: /update_role
             Method: put
+            Auth:
+              Authorizer: RolesAuthorizer
+
   GetRolesFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -384,12 +423,30 @@ Resources:
             RestApiId: !Ref RolesApi
             Path: /get_roles
             Method: get
+            Auth:
+              Authorizer: RolesAuthorizer
+
+  UsersAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: UsersAuthorizer
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref UsersApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - !GetAtt MyCognitoUserPool.Arn
 
   UsersApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       Name: UsersApi
+      Auth:
+          DefaultAuthorizer: UsersAuthorizer
+          Authorizers:
+              UsersAuthorizer:
+                UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+
   InsertUserFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -435,6 +492,9 @@ Resources:
             RestApiId: !Ref UsersApi
             Path: /delete_user
             Method: delete
+            Auth:
+                Authorizer: UsersAuthorizer
+
   UpdateUserFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -457,6 +517,8 @@ Resources:
             RestApiId: !Ref UsersApi
             Path: /update_user
             Method: put
+            Auth:
+              Authorizer: UsersAuthorizer
   GetUsersFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -479,12 +541,29 @@ Resources:
             RestApiId: !Ref UsersApi
             Path: /get_users
             Method: get
+            Auth:
+              Authorizer: UsersAuthorizer
+
+  TasksAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: TasksAuthorizer
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref TasksApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - !GetAtt MyCognitoUserPool.Arn
 
   TasksApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
       Name: TasksApi
+      Auth:
+          DefaultAuthorizer: TasksAuthorizer
+          Authorizers:
+            TasksAuthorizer:
+                UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
   InsertTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -508,6 +587,8 @@ Resources:
             RestApiId: !Ref TasksApi
             Path: /insert_task
             Method: post
+            Auth:
+              Authorizer: TasksAuthorizer
 
   DeleteTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -531,11 +612,15 @@ Resources:
             RestApiId: !Ref TasksApi
             Path: /delete_task
             Method: delete
+            Auth:
+              Authorizer: TasksAuthorizer
+
   UpdateTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${UpdateTaskFunction}'
       RetentionInDays: 14
+
   UpdateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -552,11 +637,15 @@ Resources:
             RestApiId: !Ref TasksApi
             Path: /update_task
             Method: put
+            Auth:
+              Authorizer: TasksAuthorizer
+
   GetTasksFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetTasksFunction}'
       RetentionInDays: 14
+
   GetTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -573,11 +662,15 @@ Resources:
             RestApiId: !Ref TasksApi
             Path: /get_tasks
             Method: get
+            Auth:
+              Authorizer: TasksAuthorizer
+
   GetAllTasksFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetAllTasksFunction}'
       RetentionInDays: 14
+
   GetAllTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -594,14 +687,8 @@ Resources:
             RestApiId: !Ref TasksApi
             Path: /get_all_task
             Method: get
-
-
-
-
-
-
-
-
+            Auth:
+              Authorizer: TasksAuthorizer
 Outputs:
   InsertProjectApiUrl:
     Description: "API Gateway endpoint URL for InsertProjectFunction"
