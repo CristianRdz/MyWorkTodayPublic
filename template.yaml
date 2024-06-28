@@ -588,7 +588,7 @@ Resources:
             Path: /insert_task
             Method: post
             Auth:
-              Authorizer: !Ref !Ref TasksAuthorizer
+              Authorizer: !Ref TasksAuthorizer
 
   DeleteTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
