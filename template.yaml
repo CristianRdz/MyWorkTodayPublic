@@ -86,6 +86,11 @@ Resources:
     Properties:
       StageName: Prod
       Name: ProjectApi
+      Auth:
+        DefaultAuthorizer: MyApiGatewayAuthorizer
+        Authorizers:
+          MyApiGatewayAuthorizer:
+            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
   InsertProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
