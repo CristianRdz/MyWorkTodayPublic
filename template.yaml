@@ -40,6 +40,46 @@ Resources:
                   - secretsmanager:GetSecretValue
                 Resource: 'arn:aws:secretsmanager:us-east-1:*'
               
+  MyCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: MyUserPool
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: True
+          RequireLowercase: True
+          RequireNumbers: True
+          RequireSymbols: True
+
+  AdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: Admins
+      UserPoolId: !Ref MyCognitoUserPool
+      Precedence: 1
+
+  UsersGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: Users
+      UserPoolId: !Ref MyCognitoUserPool
+      Precedence: 2
+
+  MyApiGatewayAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: MyCognitoAuthorizer
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref ProjectApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - !GetAtt MyCognitoUserPool.Arn
+
 
   ProjectApi:
     Type: AWS::Serverless::Api
@@ -70,6 +110,8 @@ Resources:
             RestApiId: !Ref ProjectApi
             Path: /insert_project
             Method: post
+            Auth:
+              Authorizer: !Ref MyApiGatewayAuthorizer
 
   DeleteProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
