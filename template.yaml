@@ -39,7 +39,7 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: 'arn:aws:secretsmanager:us-east-1:*'
-              
+
   MyCognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -81,16 +81,69 @@ Resources:
         - !GetAtt MyCognitoUserPool.Arn
 
 
+  AuthApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: AuthApi
+
+  LoginFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${LoginFunction}'
+      RetentionInDays: 14
+
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: login/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        Login:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AuthApi
+            Path: /login
+            Method: post
+
+
+  SetPasswordFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${SetPasswordFunction}'
+      RetentionInDays: 14
+
+  SetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: set_password/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        SetPassword:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AuthApi
+            Path: /set_password
+            Method: post
+
   ProjectApi:
-   Type: AWS::Serverless::Api
-   Properties:
-    StageName: Prod
-    Name: ProjectApi
-    Auth:
-      DefaultAuthorizer: MyApiGatewayAuthorizer
-      Authorizers:
-        MyApiGatewayAuthorizer:
-          UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Name: ProjectApi
+      Auth:
+        DefaultAuthorizer: MyApiGatewayAuthorizer
+        Authorizers:
+          MyApiGatewayAuthorizer:
+            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
   InsertProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
