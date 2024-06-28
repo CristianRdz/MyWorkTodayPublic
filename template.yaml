@@ -629,6 +629,15 @@ Outputs:
   GetAllTasksApiUrl:
     Description: "API Gateway endpoint URL for GetAllTasksFunction"
     Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_all_task"
+
+  LoginApiUrl:
+    Description: "API Gateway endpoint URL for LoginFunction"
+    Value: !Sub "https://${AuthApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/login"
+
+  SetPasswordApiUrl:
+    Description: "API Gateway endpoint URL for SetPasswordFunction"
+    Value: !Sub "https://${AuthApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/set_password"
+
   LambdaExecutionRoleArn:
     Description: "Lambda Execution Role ARN"
     Value: !GetAtt LambdaExecutionRole.Arn
