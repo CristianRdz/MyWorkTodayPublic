@@ -170,7 +170,7 @@ Resources:
       StageName: Prod
       Name: ProjectApi
       Auth:
-        DefaultAuthorizer: !Ref ProjectAuthorizer
+        DefaultAuthorizer: ProjectAuthorizer
         Authorizers:
           ProjectAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -318,7 +318,7 @@ Resources:
       StageName: Prod
       Name: RolesApi
       Auth:
-        DefaultAuthorizer: !Ref RolesAuthorizer
+        DefaultAuthorizer: RolesAuthorizer
         Authorizers:
           RolesAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -442,7 +442,7 @@ Resources:
       StageName: Prod
       Name: UsersApi
       Auth:
-          DefaultAuthorizer: !Ref UsersAuthorizer
+          DefaultAuthorizer: UsersAuthorizer
           Authorizers:
               UsersAuthorizer:
                 UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -560,7 +560,7 @@ Resources:
       StageName: Prod
       Name: TasksApi
       Auth:
-          DefaultAuthorizer: !Ref TasksAuthorizer
+          DefaultAuthorizer: TasksAuthorizer
           Authorizers:
             TasksAuthorizer:
                 UserPoolArn: !GetAtt MyCognitoUserPool.Arn
