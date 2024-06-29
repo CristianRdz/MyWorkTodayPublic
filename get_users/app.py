@@ -2,7 +2,6 @@ import json
 import cognitojwt
 from utils import get_connection
 
-# Reemplaza estos valores con los de tu User Pool
 USER_POOL_ID = "us-east-1_GzEBbhwsw"
 APP_CLIENT_ID = "5b1dbhgjv97slqctphs8gbkqr5"
 
@@ -19,7 +18,7 @@ def lambda_handler(event, context):
 
         user_roles = decoded_token['cognito:groups']
 
-        if 'admin' not in user_roles:
+        if 'Admins' not in user_roles:
             return {
                 'statusCode': 403,
                 'body': json.dumps({'message': 'Access denied'})
