@@ -1,29 +1,32 @@
 import json
-import cognitojwt
-from utils import get_connection
 
-USER_POOL_ID = "us-east-1_GzEBbhwsw"
-APP_CLIENT_ID = "5b1dbhgjv97slqctphs8gbkqr5"
+import boto3
+
+from utils import get_connection
 
 
 def lambda_handler(event, context):
+
+    # 1. Extract and validate Cognito token
     try:
-        token = event['headers'].get('Authorization', '').replace('Bearer ', '')
-        if not token:
-            raise ValueError("Token is missing")
+        token = event['headers']['Authorization'].split(' ')[1]
+        claims = validate_cognito_token(token)
+    except Exception as e:
+        print(e)
+        return {
+            'statusCode': 401,
+            'body': json.dumps({'message': 'Token de Cognito no válido'})
+        }
 
-        decoded_token = decode_token(token)
-        if 'cognito:groups' not in decoded_token:
-            raise ValueError("Role is missing in the token")
+    # 2. Apply authorization logic based on user role
+    if claims['cognito:groups'] != 'Admins':
+        return {
+            'statusCode': 403,
+            'body': json.dumps({'message': 'Acceso no autorizado para este usuario'})
+        }
 
-        user_roles = decoded_token['cognito:groups']
-
-        if 'Admins' not in user_roles:
-            return {
-                'statusCode': 403,
-                'body': json.dumps({'message': 'Access denied'})
-            }
-
+    # 3. If authorized, proceed with original logic
+    try:
         return get_users()
     except Exception as e:
         return {
@@ -32,19 +35,16 @@ def lambda_handler(event, context):
         }
 
 
-def decode_token(token):
+def validate_cognito_token(token):
+    # Use boto3's Cognito Identity Provider client to validate the token
+    cognito_idp = boto3.client('cognito-idp')
     try:
-        verified_claims = cognitojwt.decode(
-            token,
-            region='us-east-1',  # Reemplaza con tu región
-            userpool_id=USER_POOL_ID,
-            app_client_id=APP_CLIENT_ID,
-            testmode=False  # Cambia a True para desactivar la verificación del token (solo para pruebas)
-        )
-        return verified_claims
+        # Verify the token and return the decoded claims
+        claims = cognito_idp.verify_user_info(AccessToken=token)
+        return claims
     except Exception as e:
-        raise ValueError("Token validation failed: " + str(e))
-
+        print(e)
+        raise  # Re-raise the exception for proper error handling
 
 def get_users():
     connection = get_connection()
