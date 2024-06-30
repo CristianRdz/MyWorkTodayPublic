@@ -5,7 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.aws-sam" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 (MyWorkToday)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.11 (MyWorkTodayPublic)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

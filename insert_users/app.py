@@ -6,6 +6,7 @@ import string
 import boto3
 from botocore.exceptions import ClientError
 from utils import get_connection
+from utils import authorized
 
 
 def lambda_handler(event, context):
@@ -19,6 +20,11 @@ def lambda_handler(event, context):
     """
     # generate a new uuid
     try:
+        if not authorized(event, ["Admins"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         event = json.loads(event['body'])
         id_user = str(uuid.uuid4())
         full_name = event['full_name']
@@ -62,6 +68,7 @@ def lambda_handler(event, context):
         )
 
         return insert_user(id_user, full_name, email, password, active, fk_rol)
+
     except ClientError as e:
         return {
             'statusCode': 400,
@@ -73,20 +80,28 @@ def lambda_handler(event, context):
             'body': json.dumps({'message': str(e)})
         }
 
+
 def insert_user(id_user, full_name, email, password, active, fk_rol):
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute(
-        "INSERT INTO users (id_user, full_name, email, password, active, fk_rol) VALUES (%s, %s, %s, %s, %s, %s)",
-        (id_user, full_name, email, password, active, fk_rol)
-    )
-    connection.commit()
-    cursor.close()
-    connection.close()
-    return {
-        'statusCode': 200,
-        'body': json.dumps({'message': 'User inserted successfully with id: ' + str(id_user)})
-    }
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO users (id_user, full_name, email, password, active, fk_rol) VALUES (%s, %s, %s, %s, %s, %s)",
+            (id_user, full_name, email, password, active, fk_rol)
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'message': 'User inserted successfully with id: ' + str(id_user)})
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }
+
 
 def generate_temporary_password(length=12):
     """Genera una contraseña temporal segura"""
