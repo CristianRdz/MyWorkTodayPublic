@@ -1,6 +1,6 @@
 import json
 from utils import get_connection
-
+from utils import authorized
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -14,6 +14,11 @@ def lambda_handler(event, context):
 
 """
     try:
+        if not authorized(event, ["Admins"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         id_user = event["queryStringParameters"]["id_user"]
         if not id_user and id_user.length() != 36:
             return {
@@ -33,7 +38,21 @@ def lambda_handler(event, context):
         }
 
 
+def is_active_user(id_user):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT active FROM users WHERE id_user = %s", (id_user,))
+    active = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return active[0]
+
 def delete_user(id_user):
+    if not is_active_user(id_user):
+        return {
+            "statusCode": 400,
+            "body": json.dumps({'message': "User is already inactive with id: " + id_user}),
+        }
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("UPDATE users SET active = 0 WHERE id_user = %s", (id_user,))

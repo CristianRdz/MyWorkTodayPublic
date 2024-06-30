@@ -1,7 +1,7 @@
 import json
 import re
 from utils import get_connection
-
+from utils import authorized
 
 def lambda_handler(event, context):
     """
@@ -14,6 +14,11 @@ def lambda_handler(event, context):
     """
     # generate a new uuid
     try:
+        if not authorized(event, ["Admins"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         event = json.loads(event['body'])
         id_user = event['id_user']
         full_name = event['full_name']

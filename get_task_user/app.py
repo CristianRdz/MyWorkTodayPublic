@@ -1,5 +1,7 @@
 import json
 from utils import get_connection
+from utils import authorized
+from utils import get_jwt_claims
 
 
 def lambda_handler(event, context):
@@ -17,14 +19,13 @@ def lambda_handler(event, context):
 
 """
     try:
-        # i will took the id_user from the path parameters
-        id_user = event["queryStringParameters"].get("id_user")
-        if not id_user and id_user.length() != 36:
+        if not authorized(event, ["Admins", "Users"]):
             return {
-                'statusCode': 400,
-                'body': json.dumps({'message': 'Invalid id_user'})
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
             }
-        return get_tasks(id_user)
+        email = get_jwt_claims(event)['email']
+        return get_tasks(email)
     except KeyError:
         return {
             'statusCode': 400,
@@ -36,11 +37,10 @@ def lambda_handler(event, context):
             'body': json.dumps({'message': str(e)})
         }
 
-
-def get_tasks(id_user):
+def get_tasks(email):
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM tasks WHERE active = 1 AND id_user_assigned = %s and finished = 0", (id_user,))
+    cursor.execute("SELECT tasks.* FROM tasks WHERE active = 1 AND INNER JOIN users ON tasks.id_user_assigned = users.id_user WHERE users.email = %s", (email,))
     tasks = cursor.fetchall()
     cursor.close()
     connection.close()

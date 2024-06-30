@@ -1,6 +1,6 @@
 import json
 from utils import get_connection
-
+from utils import authorized
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -14,6 +14,11 @@ def lambda_handler(event, context):
 
 """
     try:
+        if not authorized(event, ["Admins", "Users"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         id_project = event["queryStringParameters"]["id_project"]
 
         if not id_project and id_project.length() != 36:

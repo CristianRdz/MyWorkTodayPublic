@@ -1,5 +1,6 @@
 import json
 from utils import get_connection
+from utils import authorized
 
 
 def lambda_handler(event, context):
@@ -12,8 +13,13 @@ def lambda_handler(event, context):
      active BOOLEAN NOT NULL
     ----------
        """
-     # i will took the id_project from the url
+    # i will took the id_project from the url
     try:
+        if not authorized(event, ["Admins"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         id_project = event["queryStringParameters"]["id_project"]
         if not id_project and id_project.length() != 36:
             return {
@@ -28,7 +34,22 @@ def lambda_handler(event, context):
         }
 
 
+def is_active_project(id_project):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT active FROM projects WHERE id_project = %s", (id_project,))
+    active = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return active[0]
+
+
 def delete_project(id_project):
+    if not is_active_project(id_project):
+        return {
+            "statusCode": 400,
+            "body": json.dumps({'message': "Project is already inactive with id: " + str(id_project)}),
+        }
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("UPDATE projects SET active = 0 WHERE id_project = %s", (id_project,))

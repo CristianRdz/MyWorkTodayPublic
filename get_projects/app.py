@@ -1,6 +1,6 @@
 import json
 from utils import get_connection
-
+from utils import authorized
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -14,6 +14,11 @@ def lambda_handler(event, context):
 
 """
     try:
+        if not authorized(event, ["Admins", "Users"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM projects WHERE active = 1 ORDER BY name_project")

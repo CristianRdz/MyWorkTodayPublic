@@ -1,6 +1,6 @@
 import json
 from utils import get_connection
-
+from utils import authorized
 
 def lambda_handler(event, context):
     """
@@ -15,6 +15,11 @@ def lambda_handler(event, context):
      fk_project CHAR(36) NOT NULL
     """
     try:
+        if not authorized(event, ["Admins", "Users"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         event = json.loads(event['body'])
         id_task = event['id_task']
         name = event['name']

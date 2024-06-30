@@ -7,7 +7,12 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 10
+  Api:
+    Cors:
+      AllowMethods: "'POST, PUT, GET, DELETE'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
 
 Resources:
   LambdaExecutionRole:
@@ -106,6 +111,7 @@ Resources:
     Properties:
       StageName: Prod
       Name: AuthApi
+
 
   LoginFunctionLogGroup:
     Type: AWS::Logs::LogGroup

@@ -1,6 +1,6 @@
 import json
 from utils import get_connection
-
+from utils import authorized
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -12,8 +12,14 @@ def lambda_handler(event, context):
 
 """
     try:
+        if not authorized(event, ["Admins"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         return get_roles()
     except Exception as e:
+
         return {
             'statusCode': 500,
             'body': json.dumps({'message': str(e)})

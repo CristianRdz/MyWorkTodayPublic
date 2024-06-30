@@ -1,6 +1,7 @@
 import json
 import uuid
 from utils import get_connection
+from utils import authorized
 
 
 def lambda_handler(event, context):
@@ -11,6 +12,11 @@ def lambda_handler(event, context):
      active BOOLEAN NOT NULL
     """
     try:
+        if not authorized(event, ["Admins"]):
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Unauthorized'})
+            }
         # generate a new uuid
         event = json.loads(event['body'])
         id_project = str(uuid.uuid4())
