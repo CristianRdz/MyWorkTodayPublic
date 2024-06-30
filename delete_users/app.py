@@ -1,7 +1,11 @@
 import json
 from utils import get_connection
 from utils import authorized
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -17,23 +21,27 @@ def lambda_handler(event, context):
         if not authorized(event, ["Admins"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         id_user = event["queryStringParameters"]["id_user"]
         if not id_user and id_user.length() != 36:
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'id_user is required and must be a valid uuid'})
             }
         return delete_user(id_user)
     except KeyError:
         return {
             'statusCode': 400,
+            'headers': headers_open,
             'body': json.dumps({'message': 'id_user is required and must be a valid uuid'})
         }
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -51,6 +59,7 @@ def delete_user(id_user):
     if not is_active_user(id_user):
         return {
             "statusCode": 400,
+            'headers': headers_open,
             "body": json.dumps({'message': "User is already inactive with id: " + id_user}),
         }
     connection = get_connection()
@@ -62,6 +71,7 @@ def delete_user(id_user):
 
     return {
         "statusCode": 200,
+        'headers': headers_open,
         "body": json.dumps({
             "message": "User deleted successfully with id: " + id_user,
         }),

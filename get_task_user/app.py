@@ -3,7 +3,11 @@ from utils import get_connection
 from utils import authorized
 from utils import get_jwt_claims
 
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -22,6 +26,7 @@ def lambda_handler(event, context):
         if not authorized(event, ["Admins", "Users"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         email = get_jwt_claims(event)['email']
@@ -29,11 +34,13 @@ def lambda_handler(event, context):
     except KeyError:
         return {
             'statusCode': 400,
+            'headers': headers_open,
             'body': json.dumps({'message': 'id_user is required and must be 36 characters'})
         }
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -59,5 +66,6 @@ def get_tasks(email):
         })
     return {
         "statusCode": 200,
+        'headers': headers_open,
         "body": json.dumps(task_list)
     }

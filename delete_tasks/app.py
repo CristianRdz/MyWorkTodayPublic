@@ -2,6 +2,11 @@ import json
 from utils import get_connection
 from utils import authorized
 
+headers_open = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -19,23 +24,27 @@ def lambda_handler(event, context):
     try:
         if not authorized(event, ["Admins"]):
             return {
+                'headers': headers_open,
                 'statusCode': 403,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         id_task = event["queryStringParameters"]["id_task"]
         if not id_task and id_task.length() != 36:
             return {
+                'headers': headers_open,
                 'statusCode': 400,
                 'body': json.dumps({'message': 'id_task is required and must be 36 characters'})
             }
         return delete_task(id_task)
     except KeyError:
         return {
+            'headers': headers_open,
             'statusCode': 400,
             'body': json.dumps({'message': 'id_task is required and must be 36 characters'})
         }
     except Exception as e:
         return {
+            'headers': headers_open,
             'statusCode': 500,
             'body': json.dumps({'message': str(e)})
         }
@@ -51,6 +60,7 @@ def is_active_task(id_task):
 def delete_task(id_task):
     if not is_active_task(id_task):
         return {
+            'headers': headers_open,
             "statusCode": 400,
             "body": json.dumps({'message': "Task is already inactive with id: " + str(id_task)}),
         }
@@ -61,6 +71,7 @@ def delete_task(id_task):
     cursor.close()
     connection.close()
     return {
+        'headers': headers_open,
         "statusCode": 200,
         "body": json.dumps({'message': "Task deleted successfully with id: " + str(id_task)}),
     }

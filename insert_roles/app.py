@@ -3,7 +3,11 @@ import uuid
 from utils import get_connection
 from utils import authorized
 
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     """
     id_rol CHAR(36) NOT NULL ,
@@ -15,6 +19,7 @@ def lambda_handler(event, context):
         if not authorized(event, ["Admins"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         event = json.loads(event['body'])
@@ -25,6 +30,7 @@ def lambda_handler(event, context):
         if not name:
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'name is required'})
             }
 
@@ -32,6 +38,7 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -45,5 +52,6 @@ def insert_role(id_rol, name, active):
     connection.close()
     return {
         'statusCode': 200,
+        'headers': headers_open,
         'body': json.dumps({'message': 'Role inserted successfully with id: ' + str(id_rol)})
     }

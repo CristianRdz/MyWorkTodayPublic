@@ -2,7 +2,11 @@ import json
 import re
 from utils import get_connection
 from utils import authorized
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     """
     id_user CHAR(36) NOT NULL ,
@@ -17,6 +21,7 @@ def lambda_handler(event, context):
         if not authorized(event, ["Admins"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         event = json.loads(event['body'])
@@ -29,6 +34,7 @@ def lambda_handler(event, context):
         if not full_name or not email or not password or not fk_rol:
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'full_name, email, password and fk_rol are required'})
             }
 
@@ -37,6 +43,7 @@ def lambda_handler(event, context):
         if not re.match(email_regex, email):
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Invalid email format'})
             }
 
@@ -44,6 +51,7 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -60,5 +68,6 @@ def update_user(id_user, full_name, email, password, fk_rol):
     connection.close()
     return {
         'statusCode': 200,
+        'headers': headers_open,
         'body': json.dumps({'message': 'User updated successfully with id: ' + str(id_user)})
     }

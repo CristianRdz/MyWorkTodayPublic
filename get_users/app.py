@@ -1,18 +1,24 @@
 import json
 from utils import get_connection
 from utils import authorized
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     try:
         if not authorized(event, ["Admins"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         return get_users()
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -37,5 +43,6 @@ def get_users():
 
     return {
         "statusCode": 200,
+        'headers': headers_open,
         "body": json.dumps(user_list),
     }

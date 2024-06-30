@@ -1,7 +1,11 @@
 import json
 from utils import get_connection
 from utils import authorized
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     """
     id_task CHAR(36) NOT NULL ,
@@ -18,6 +22,7 @@ def lambda_handler(event, context):
         if not authorized(event, ["Admins", "Users"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         event = json.loads(event['body'])
@@ -34,6 +39,7 @@ def lambda_handler(event, context):
         if not name or not date_time_start or not date_time_end or not id_user_assigned or not fk_project:
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps(
                     {'message': 'name, date_time_start, date_time_end, id_user_assigned and fk_project are required'})
             }
@@ -41,6 +47,7 @@ def lambda_handler(event, context):
         if date_time_start > date_time_end:
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'date_time_start must be less than date_time_end'})
             }
 
@@ -50,6 +57,7 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -67,5 +75,6 @@ def update_task(id_task, name, description, date_time_start, date_time_end, acti
     connection.close()
     return {
         'statusCode': 200,
+        'headers': headers_open,
         'body': json.dumps({'message': 'Task updated successfully with id: ' + str(id_task)})
     }

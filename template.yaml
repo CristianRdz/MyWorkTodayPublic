@@ -10,9 +10,9 @@ Globals:
     Timeout: 10
   Api:
     Cors:
-      AllowMethods: "'POST, PUT, GET, DELETE'"
-      AllowHeaders: "'*'"
       AllowOrigin: "'*'"
+      AllowHeaders: "'Content-Type'"
+      AllowMethods: "'GET,PUT,POST,DELETE,OPTIONS'"
 
 Resources:
   LambdaExecutionRole:

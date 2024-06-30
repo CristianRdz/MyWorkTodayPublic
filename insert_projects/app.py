@@ -3,7 +3,11 @@ import uuid
 from utils import get_connection
 from utils import authorized
 
-
+headers_open = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    }
 def lambda_handler(event, context):
     """
     id_project CHAR(36) NOT NULL ,
@@ -15,6 +19,7 @@ def lambda_handler(event, context):
         if not authorized(event, ["Admins"]):
             return {
                 'statusCode': 403,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         # generate a new uuid
@@ -27,6 +32,7 @@ def lambda_handler(event, context):
         if not name_project:
             return {
                 'statusCode': 400,
+                'headers': headers_open,
                 'body': json.dumps({'message': 'name_project is required'})
             }
 
@@ -35,6 +41,7 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
 
@@ -50,5 +57,6 @@ def insert_project(id_project, name_project, description, active):
     connection.close()
     return {
         'statusCode': 200,
+        'headers': headers_open,
         'body': json.dumps({'message': 'Project inserted successfully with id: ' + str(id_project)})
     }
