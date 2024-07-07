@@ -9,7 +9,7 @@ headers_open = {
     }
 def lambda_handler(event, context):
     try:
-        if not authorized(event, ["Admins"]):
+        if not authorized(event, ["Admins", "Users"]):
             return {
                 'statusCode': 403,
                 'headers': headers_open,

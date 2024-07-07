@@ -4,10 +4,12 @@ from utils import authorized
 from utils import get_jwt_claims
 
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -47,10 +49,16 @@ def lambda_handler(event, context):
             'body': json.dumps({'message': str(e)})
         }
 
+
 def get_tasks(email):
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT tasks.* FROM tasks WHERE active = 1 AND INNER JOIN users ON tasks.id_user_assigned = users.id_user WHERE users.email = %s", (email,))
+    cursor.execute("""
+    SELECT tasks.* 
+    FROM tasks 
+    INNER JOIN users ON tasks.id_user_assigned = users.id_user 
+    WHERE users.email = %s AND tasks.active = 1
+""", (email,))
     tasks = cursor.fetchall()
     cursor.close()
     connection.close()
