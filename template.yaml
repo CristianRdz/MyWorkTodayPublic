@@ -597,6 +597,32 @@ Resources:
             Auth:
               Authorizer: UsersAuthorizer
 
+  GetMyUserFunctionLogGroup:
+   Type: AWS::Logs::LogGroup
+   Properties:
+     LogGroupName: !Sub '/aws/lambda/${GetMyUserFunction}'
+     RetentionInDays: 14
+
+  GetMyUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_my_user/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        GetMyUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UsersApi
+            Path: /get_my_user
+            Method: get
+            Auth:
+              Authorizer: UsersAuthorizer
+
+
   TasksAuthorizer:
     Type: AWS::ApiGateway::Authorizer
     Properties:
@@ -782,6 +808,9 @@ Outputs:
   GetUsersApiUrl:
     Description: "API Gateway endpoint URL for GetUsersFunction"
     Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_users"
+  GetMyUserApiUrl:
+    Description: "API Gateway endpoint URL for GetMyUserFunction"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get_my_user"
   InsertTaskApiUrl:
     Description: "API Gateway endpoint URL for InsertTaskFunction"
     Value: !Sub "https://${TasksApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_task"

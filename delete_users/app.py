@@ -1,11 +1,19 @@
 import json
+
+import boto3
+from botocore.exceptions import ClientError
+
 from utils import get_connection
 from utils import authorized
+from utils import get_secret
+
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -25,7 +33,7 @@ def lambda_handler(event, context):
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         id_user = event["queryStringParameters"]["id_user"]
-        if not id_user and id_user.length() != 36:
+        if not id_user or len(id_user) != 36:
             return {
                 'statusCode': 400,
                 'headers': headers_open,
@@ -55,6 +63,17 @@ def is_active_user(id_user):
     connection.close()
     return active[0]
 
+
+def get_user_email(id_user):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT email FROM users WHERE id_user = %s", (id_user,))
+    email = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return email[0]
+
+
 def delete_user(id_user):
     if not is_active_user(id_user):
         return {
@@ -68,6 +87,7 @@ def delete_user(id_user):
     connection.commit()
     cursor.close()
     connection.close()
+    disableCognitoUser(get_user_email(id_user))
 
     return {
         "statusCode": 200,
@@ -76,3 +96,27 @@ def delete_user(id_user):
             "message": "User deleted successfully with id: " + id_user,
         }),
     }
+
+
+def disableCognitoUser(email):
+    secrets = get_secret()
+    client = boto3.client('cognito-idp')
+    user_pool_id = secrets['POOL_ID']
+    try:
+        client.admin_disable_user(
+            UserPoolId=user_pool_id,
+            Username=email
+        )
+
+    except ClientError as e:
+        return {
+            'statusCode': 400,
+            'headers': headers_open,
+            'body': json.dumps({'message': e.response['Error']['Message']})
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': headers_open,
+            'body': json.dumps({'message': str(e)})
+        }

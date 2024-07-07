@@ -73,8 +73,7 @@ def lambda_handler(event, context):
             Username=email,
             GroupName=role
         )
-
-        return insert_user(id_user, full_name, email, password, active, fk_rol)
+        return insert_user(id_user, full_name, email, "secret", active, fk_rol)
 
     except ClientError as e:
         return {
