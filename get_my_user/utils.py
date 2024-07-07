@@ -44,20 +44,23 @@ def get_connection():
 
 def get_jwt_claims(token):
     try:
-        # 1. Dividir el token en sus partes (header, payload, signature)
+        # 1. Split the token into its parts (header, payload, signature)
         parts = token.split(".")
         if len(parts) != 3:
-            raise ValueError("Token JWT inválido")
+            raise ValueError("Invalid JWT token")
 
-        # 2. Decodificar el payload (segunda parte) desde Base64
+        # 2. Decode the payload (second part) from Base64
         payload_encoded = parts[1]
-        payload_decoded = base64.b64decode(payload_encoded + "==")  # Se agrega padding si es necesario
+        missing_padding = len(payload_encoded) % 4
+        if missing_padding:
+            payload_encoded += '=' * (4 - missing_padding)
+        payload_decoded = base64.urlsafe_b64decode(payload_encoded)
         claims = json.loads(payload_decoded)
 
         return claims
 
     except (ValueError, json.JSONDecodeError) as e:
-        print(f"Error al decodificar el token: {e}")
+        print(f"Error decoding token: {e}")
         return None
 
 

@@ -29,7 +29,9 @@ def lambda_handler(event, context):
                 'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
-        claims = get_jwt_claims(event)
+        token = event['headers']['Authorization']
+        clean_token = token.replace("Bearer ", "")
+        claims = get_jwt_claims(clean_token)
         email = claims['email']
         return get_tasks(email)
     except KeyError:
