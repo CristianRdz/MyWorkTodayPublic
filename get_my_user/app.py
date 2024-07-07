@@ -16,7 +16,7 @@ def lambda_handler(event, context):
                 'body': json.dumps({'message': 'Unauthorized'})
             }
         claims = get_jwt_claims(event)
-        email = claims['email']
+        email = str(claims['email'])
         return get_my_user(email)
     except Exception as e:
         return {
