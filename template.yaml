@@ -762,10 +762,10 @@ Resources:
           TasksAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
-  OptionsFunctionLogGroup:
+  OptionsFunctionLogGroupTasks:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${OptionsFunction}'
+      LogGroupName: !Sub '/aws/lambda/${OptionsFunctionTask}'
       RetentionInDays: 14
 
   OptionsFunctionTask:
