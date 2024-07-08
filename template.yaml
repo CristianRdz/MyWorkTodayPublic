@@ -240,6 +240,31 @@ Resources:
           ProjectAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
+  OptionsFunctionLogGroupProject:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${OptionsFunctionProject}'
+      RetentionInDays: 14
+
+  OptionsFunctionProject:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: options/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProjectApi
+            Path: /{proxy+}
+            Method: options
+            Auth:
+              Authorizer: None
+
   InsertProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -289,7 +314,7 @@ Resources:
             Path: /delete_project
             Method: delete
             Auth:
-             Authorizer: ProjectAuthorizer
+              Authorizer: ProjectAuthorizer
 
   GetProjectsFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -401,7 +426,30 @@ Resources:
           RolesAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
 
+  OptionsFunctionLogGroupRoles:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${OptionsFunctionRoles}'
+      RetentionInDays: 14
 
+  OptionsFunctionRoles:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: options/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RolesApi
+            Path: /{proxy+}
+            Method: options
+            Auth:
+              Authorizer: None
   InsertRoleFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -533,10 +581,35 @@ Resources:
       StageName: Prod
       Name: UsersApi
       Auth:
-          DefaultAuthorizer: UsersAuthorizer
-          Authorizers:
-              UsersAuthorizer:
-                UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+        DefaultAuthorizer: UsersAuthorizer
+        Authorizers:
+          UsersAuthorizer:
+            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+
+  OptionsFunctionLogGroupUser:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${OptionsFunctionUser}'
+      RetentionInDays: 14
+
+  OptionsFunctionUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: options/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UsersApi
+            Path: /{proxy+}
+            Method: options
+            Auth:
+              Authorizer: None
 
   InsertUserFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -585,7 +658,7 @@ Resources:
             Path: /delete_user
             Method: delete
             Auth:
-                Authorizer: UsersAuthorizer
+              Authorizer: UsersAuthorizer
 
   UpdateUserFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -637,10 +710,10 @@ Resources:
               Authorizer: UsersAuthorizer
 
   GetMyUserFunctionLogGroup:
-   Type: AWS::Logs::LogGroup
-   Properties:
-     LogGroupName: !Sub '/aws/lambda/${GetMyUserFunction}'
-     RetentionInDays: 14
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetMyUserFunction}'
+      RetentionInDays: 14
 
   GetMyUserFunction:
     Type: AWS::Serverless::Function
@@ -691,10 +764,35 @@ Resources:
       StageName: Prod
       Name: TasksApi
       Auth:
-          DefaultAuthorizer: TasksAuthorizer
-          Authorizers:
-            TasksAuthorizer:
-                UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+        DefaultAuthorizer: TasksAuthorizer
+        Authorizers:
+          TasksAuthorizer:
+            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+
+  OptionsFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${OptionsFunction}'
+      RetentionInDays: 14
+
+  OptionsFunctionTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: options/
+      Handler: app.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Architectures:
+        - x86_64
+      Events:
+        InsertTask:
+          Type: Api
+          Properties:
+            RestApiId: !Ref TasksApi
+            Path: /{proxy+}
+            Method: options
+            Auth:
+              Authorizer: None
 
   InsertTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
