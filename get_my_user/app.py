@@ -6,6 +6,7 @@ headers_open = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
         'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+        'HTTP/1.1 200 OK': 'HTTP/1.1 200 OK'
     }
 def lambda_handler(event, context):
     try:

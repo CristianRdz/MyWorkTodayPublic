@@ -216,6 +216,19 @@ Resources:
       ProviderARNs:
         - !GetAtt MyCognitoUserPool.Arn
 
+  DefaultUnauthorizedResponseProjectApi:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,PUT,POST,DELETE,OPTIONS'"
+      ResponseTemplates:
+        application/json: '{"message":"Unauthorized"}'
+      ResponseType: UNAUTHORIZED
+      RestApiId: !Ref ProjectApi
+      StatusCode: '401'
+
   ProjectApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -364,6 +377,19 @@ Resources:
       ProviderARNs:
         - !GetAtt MyCognitoUserPool.Arn
 
+  DefaultUnauthorizedResponseRolesApi:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,PUT,POST,DELETE,OPTIONS'"
+      ResponseTemplates:
+        application/json: '{"message":"Unauthorized"}'
+      ResponseType: UNAUTHORIZED
+      RestApiId: !Ref RolesApi
+      StatusCode: '401'
+
   RolesApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -487,6 +513,19 @@ Resources:
       Type: COGNITO_USER_POOLS
       ProviderARNs:
         - !GetAtt MyCognitoUserPool.Arn
+
+  DefaultUnauthorizedResponseUsersApi:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,PUT,POST,DELETE,OPTIONS'"
+      ResponseTemplates:
+        application/json: '{"message":"Unauthorized"}'
+      ResponseType: UNAUTHORIZED
+      RestApiId: !Ref UsersApi
+      StatusCode: '401'
 
   UsersApi:
     Type: AWS::Serverless::Api
@@ -632,6 +671,19 @@ Resources:
       Type: COGNITO_USER_POOLS
       ProviderARNs:
         - !GetAtt MyCognitoUserPool.Arn
+
+  DefaultUnauthorizedResponseTasksApi:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'GET,PUT,POST,DELETE,OPTIONS'"
+      ResponseTemplates:
+        application/json: '{"message":"Unauthorized"}'
+      ResponseType: UNAUTHORIZED
+      RestApiId: !Ref TasksApi
+      StatusCode: '401'
 
   TasksApi:
     Type: AWS::Serverless::Api
