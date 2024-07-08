@@ -227,7 +227,7 @@ Resources:
         application/json: '{"message":"Unauthorized"}'
       ResponseType: UNAUTHORIZED
       RestApiId: !Ref ProjectApi
-      StatusCode: '401'
+      StatusCode: '200'
 
   ProjectApi:
     Type: AWS::Serverless::Api
@@ -388,7 +388,7 @@ Resources:
         application/json: '{"message":"Unauthorized"}'
       ResponseType: UNAUTHORIZED
       RestApiId: !Ref RolesApi
-      StatusCode: '401'
+      StatusCode: '200'
 
   RolesApi:
     Type: AWS::Serverless::Api
@@ -525,7 +525,7 @@ Resources:
         application/json: '{"message":"Unauthorized"}'
       ResponseType: UNAUTHORIZED
       RestApiId: !Ref UsersApi
-      StatusCode: '401'
+      StatusCode: '200'
 
   UsersApi:
     Type: AWS::Serverless::Api
@@ -683,7 +683,7 @@ Resources:
         application/json: '{"message":"Unauthorized"}'
       ResponseType: UNAUTHORIZED
       RestApiId: !Ref TasksApi
-      StatusCode: '401'
+      StatusCode: '200'
 
   TasksApi:
     Type: AWS::Serverless::Api
