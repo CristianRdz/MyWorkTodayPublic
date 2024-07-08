@@ -2,11 +2,15 @@ import json
 import re
 from utils import get_connection
 from utils import authorized
+from utils import get_jwt_claims
+
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """
     id_user CHAR(36) NOT NULL ,
@@ -18,7 +22,7 @@ def lambda_handler(event, context):
     """
     # generate a new uuid
     try:
-        if not authorized(event, ["Admins"]):
+        if not authorized(event, ["Admins", "Users"]):
             return {
                 'statusCode': 403,
                 'headers': headers_open,
@@ -46,8 +50,21 @@ def lambda_handler(event, context):
                 'headers': headers_open,
                 'body': json.dumps({'message': 'Invalid email format'})
             }
+        token = event['headers']['Authorization']
+        clean_token = token.replace("Bearer ", "")
+        claims = get_jwt_claims(clean_token)
+        roles = claims['cognito:groups']
+        user_email = claims['email']
 
-        return update_user(id_user, full_name, email, password, fk_rol)
+        # Check if the user is an admin or the email matches the user's email
+        if 'Admins' in roles or user_email == email:
+            return update_user(id_user, full_name, email, password, fk_rol)
+        else:
+            return {
+                'statusCode': 403,
+                'headers': headers_open,
+                'body': json.dumps({'message': 'Unauthorized to edit this user'})
+            }
     except Exception as e:
         return {
             'statusCode': 500,
