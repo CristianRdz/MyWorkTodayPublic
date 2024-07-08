@@ -235,7 +235,6 @@ Resources:
       StageName: Prod
       Name: ProjectApi
       Auth:
-        DefaultAuthorizer: ProjectAuthorizer
         Authorizers:
           ProjectAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -262,8 +261,7 @@ Resources:
             RestApiId: !Ref ProjectApi
             Path: /{proxy+}
             Method: options
-            Auth:
-              Authorizer: None
+
 
   InsertProjectFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -421,7 +419,6 @@ Resources:
       StageName: Prod
       Name: RolesApi
       Auth:
-        DefaultAuthorizer: RolesAuthorizer
         Authorizers:
           RolesAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -448,8 +445,7 @@ Resources:
             RestApiId: !Ref RolesApi
             Path: /{proxy+}
             Method: options
-            Auth:
-              Authorizer: None
+
   InsertRoleFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -581,7 +577,6 @@ Resources:
       StageName: Prod
       Name: UsersApi
       Auth:
-        DefaultAuthorizer: UsersAuthorizer
         Authorizers:
           UsersAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -608,8 +603,7 @@ Resources:
             RestApiId: !Ref UsersApi
             Path: /{proxy+}
             Method: options
-            Auth:
-              Authorizer: None
+
 
   InsertUserFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -764,7 +758,6 @@ Resources:
       StageName: Prod
       Name: TasksApi
       Auth:
-        DefaultAuthorizer: TasksAuthorizer
         Authorizers:
           TasksAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
@@ -791,8 +784,7 @@ Resources:
             RestApiId: !Ref TasksApi
             Path: /{proxy+}
             Method: options
-            Auth:
-              Authorizer: None
+
 
   InsertTaskFunctionLogGroup:
     Type: AWS::Logs::LogGroup
