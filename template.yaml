@@ -11,7 +11,7 @@ Globals:
   Api:
     Cors:
       AllowOrigin: "'*'"
-      AllowHeaders: "'Content-Type'"
+      AllowHeaders: "'*'"
       AllowMethods: "'GET,PUT,POST,DELETE,OPTIONS'"
 
 Resources:
