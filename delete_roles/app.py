@@ -3,7 +3,7 @@ from utils import get_connection
 from utils import authorized
 headers_open = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': '*',
         'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
     }
 def lambda_handler(event, context):
