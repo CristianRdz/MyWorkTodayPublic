@@ -1,8 +1,8 @@
 import json
 import re
-from .utils import get_connection
-from .utils import authorized
-from .utils import get_jwt_claims
+from utils import get_connection
+from utils import authorized
+from utils import get_jwt_claims
 
 headers_open = {
         'Access-Control-Allow-Origin': '*',
