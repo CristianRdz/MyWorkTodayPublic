@@ -1,8 +1,8 @@
 import json
 import re
-from utils import get_connection
-from utils import authorized
-from utils import get_jwt_claims
+from .utils import get_connection
+from .utils import authorized
+from .utils import get_jwt_claims
 
 headers_open = {
         'Access-Control-Allow-Origin': '*',
@@ -17,7 +17,6 @@ def lambda_handler(event, context):
      full_name TEXT NOT NULL ,
      email TEXT NOT NULL ,
      password TEXT NOT NULL ,
-     active BOOLEAN NOT NULL ,
      fk_rol CHAR(36) NOT NULL
     """
     # generate a new uuid
@@ -28,6 +27,12 @@ def lambda_handler(event, context):
                 'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
+        token = event['headers']['Authorization']
+        clean_token = token.replace("Bearer ", "")
+        claims = get_jwt_claims(clean_token)
+        roles = claims['cognito:groups']
+        user_email = claims['email']
+
         event = json.loads(event['body'])
         id_user = event['id_user']
         full_name = event['full_name']
@@ -50,11 +55,7 @@ def lambda_handler(event, context):
                 'headers': headers_open,
                 'body': json.dumps({'message': 'Invalid email format'})
             }
-        token = event['headers']['Authorization']
-        clean_token = token.replace("Bearer ", "")
-        claims = get_jwt_claims(clean_token)
-        roles = claims['cognito:groups']
-        user_email = claims['email']
+
 
         # Check if the user is an admin or the email matches the user's email
         if 'Admins' in roles or user_email == email:
