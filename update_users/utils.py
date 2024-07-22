@@ -62,14 +62,19 @@ def get_jwt_claims(token):
 
 
 def authorized(event, authorized_groups):
-    token = event['headers']['Authorization']
-    clean_token = token.replace("Bearer ", "")
-    claims = get_jwt_claims(clean_token)
-    if claims is None:
+    if 'headers' in event and 'Authorization' in event['headers']:
+        token = event['headers']['Authorization']
+        clean_token = token.replace("Bearer ", "")
+        claims = get_jwt_claims(clean_token)
+        if claims is None:
+            return False
+        if 'cognito:groups' not in claims:
+            return False
+        for group in authorized_groups:
+            if group in claims['cognito:groups']:
+                return True
         return False
-    if 'cognito:groups' not in claims:
-        return False
-    for group in authorized_groups:
-        if group in claims['cognito:groups']:
-            return True
     return False
+
+
+
