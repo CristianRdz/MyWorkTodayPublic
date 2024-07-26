@@ -1,7 +1,6 @@
 import json
 import uuid
 import re
-import random
 import string
 import boto3
 import secrets
