@@ -83,48 +83,56 @@ class TestDeleteUsers(unittest.TestCase):
     @patch('delete_users.app.is_active_user')
     @patch('delete_users.app.get_connection')
     @patch('boto3.client')
-    @patch('boto3.Session')  # Mock the Boto3 Session creation
+    @patch('boto3.Session')
     def test_delete_user(self, mock_session, mock_boto3_client, mock_get_connection, mock_is_active_user):
+        # Setup mocks for database connection
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
         mock_get_connection.return_value = mock_connection
         mock_connection.cursor.return_value = mock_cursor
-        mock_is_active_user.return_value = True  # Assume the user is active
+
+        # Setup mock for is_active_user
+        mock_is_active_user.return_value = True
 
         # Mock AWS Cognito
         mock_cognito_client = mock_boto3_client.return_value
         mock_cognito_client.admin_disable_user.return_value = {}
 
-        # Configure the mock session to provide credentials
-        mock_session.return_value.get_credentials.return_value = {
-            'access_key': 'your_access_key_id',
-            'secret_key': 'your_secret_access_key',
-            'token': 'your_session_token'  # Optional
-        }
-
-        user_id = "123456789012345678901234567890123456"  # Example user ID
-        response = delete_user(user_id)
-
-        # Assertions
-        self.assertEqual(response['statusCode'], 200)
-        self.assertEqual(response['body'], json.dumps({
-            'message': f'User deleted successfully with id: {user_id}'
-        }))
-
-        # Verify Database Interaction
-        mock_cursor.execute.assert_any_call(
-            "UPDATE users SET active = 0 WHERE id_user = %s",
-            (user_id,)  # Use a tuple for single-value SQL parameters
+        # Mock session credentials and secrets
+        mock_session.return_value.get_credentials.return_value = MagicMock(
+            get_frozen_credentials=MagicMock(return_value={
+                'access_key': 'mock_access_key',
+                'secret_key': 'mock_secret_key',
+                'token': 'mock_session_token'
+            })
         )
-        mock_cursor.close.assert_called()
-        mock_connection.close.assert_called()
 
-        # Verify Cognito Interaction
-        mock_boto3_client.assert_called_once_with('cognito-idp')
-        mock_cognito_client.admin_disable_user.assert_called_once_with(
-            UserPoolId='us-east-1_GzEBbhwsw',  # Use the actual user pool ID
-            Username=get_user_email(user_id)  # Assuming get_user_email is defined
-        )
+        # Mock secret fetching
+        mock_get_secret = MagicMock(return_value={'POOL_ID': 'us-east-1_GzEBbhwsw'})
+        with patch('delete_users.app.get_secret', mock_get_secret):
+            user_id = "123456789012345678901234567890123456"  # Example user ID
+            response = delete_user(user_id)
+
+            # Assertions
+            self.assertEqual(response['statusCode'], 200)
+            self.assertEqual(response['body'], json.dumps({
+                'message': f'User deleted successfully with id: {user_id}'
+            }))
+
+            # Verify Database Interaction
+            mock_cursor.execute.assert_any_call(
+                "UPDATE users SET active = 0 WHERE id_user = %s",
+                (user_id,)
+            )
+            mock_cursor.close.assert_called()
+            mock_connection.close.assert_called()
+
+            # Verify Cognito Interaction
+            mock_boto3_client.assert_called_once_with('cognito-idp')
+            mock_cognito_client.admin_disable_user.assert_called_once_with(
+                UserPoolId='us-east-1_GzEBbhwsw',
+                Username=get_user_email(user_id)
+            )
     @patch('boto3.session.Session')
     def test_get_secret(self, mock_session):
         mock_client = MagicMock()
