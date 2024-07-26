@@ -1,13 +1,18 @@
 import json
 import uuid
-from utils import get_connection
-from utils import authorized
+
+try:
+    from utils import get_connection, authorized
+except ImportError:
+    from .utils import get_connection, authorized
 
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """
     id_rol CHAR(36) NOT NULL ,

@@ -1,13 +1,18 @@
 import json
 import uuid
-from utils import get_connection
-from utils import authorized
+
+try:
+    from utils import get_connection, authorized
+except ImportError:
+    from .utils import get_connection, authorized
 
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """
     id_task CHAR(36) NOT NULL ,
@@ -64,6 +69,7 @@ def lambda_handler(event, context):
             'body': json.dumps({'message': str(e)})
         }
 
+
 def is_available(id_user_assigned, date_time_start, date_time_end):
     connection = get_connection()
     cursor = connection.cursor()
@@ -77,7 +83,8 @@ def is_available(id_user_assigned, date_time_start, date_time_end):
     # Check if the user has any tasks in the given time interval
     cursor.execute(
         "SELECT * FROM tasks WHERE active = 1 AND id_user_assigned = %s AND ((date_time_start <= %s AND date_time_end >= %s) OR (date_time_start <= %s AND date_time_end >= %s) OR (date_time_start >= %s AND date_time_end <= %s))",
-        (id_user_assigned, date_time_start, date_time_start, date_time_end, date_time_end, date_time_start, date_time_end)
+        (id_user_assigned, date_time_start, date_time_start, date_time_end, date_time_end, date_time_start,
+         date_time_end)
     )
     tasks = cursor.fetchall()
     cursor.close()
@@ -87,6 +94,7 @@ def is_available(id_user_assigned, date_time_start, date_time_end):
         return False
     # Otherwise, return True
     return True
+
 
 def insert_task(id_task, name, description, date_time_start, date_time_end, active, finished, id_user_assigned,
                 fk_project):
@@ -112,8 +120,4 @@ def insert_task(id_task, name, description, date_time_start, date_time_end, acti
         'body': json.dumps({'message': 'Task inserted successfully with id: ' + str(id_task)})
     }
 
-
 # Path: insert_tasks/requirements.txt
-
-
-

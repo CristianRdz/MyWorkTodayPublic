@@ -3,9 +3,10 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 
-from utils import get_connection
-from utils import authorized
-from utils import get_secret
+try:
+    from utils import get_connection, authorized, get_secret
+except ImportError:
+    from .utils import get_connection, authorized, get_secret
 
 headers_open = {
     'Access-Control-Allow-Origin': '*',
@@ -87,7 +88,7 @@ def delete_user(id_user):
     connection.commit()
     cursor.close()
     connection.close()
-    disableCognitoUser(get_user_email(id_user))
+    disable_cognito_user(get_user_email(id_user))
 
     return {
         "statusCode": 200,
@@ -98,7 +99,7 @@ def delete_user(id_user):
     }
 
 
-def disableCognitoUser(email):
+def disable_cognito_user(email):
     secrets = get_secret()
     client = boto3.client('cognito-idp')
     user_pool_id = secrets['POOL_ID']

@@ -1,13 +1,17 @@
 import json
-from utils import get_connection
-from utils import authorized
-from utils import get_jwt_claims
+
+try:
+    from utils import get_connection, authorized, get_jwt_claims
+except ImportError:
+    from .utils import get_connection, authorized, get_jwt_claims
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-        'HTTP/1.1 200 OK': 'HTTP/1.1 200 OK'
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+    'HTTP/1.1 200 OK': 'HTTP/1.1 200 OK'
+}
+
+
 def lambda_handler(event, context):
     try:
         if not authorized(event, ["Admins", "Users"]):
@@ -27,7 +31,6 @@ def lambda_handler(event, context):
             'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
-
 
 
 def get_my_user(email):
@@ -55,5 +58,3 @@ def get_my_user(email):
             "fk_rol": user[5]
         })
     }
-
-

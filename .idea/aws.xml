@@ -6,7 +6,6 @@
     <option name="recentlyUsedProfiles">
       <list>
         <option value="profile:default" />
-        <option value="profile:cristian" />
       </list>
     </option>
     <option name="recentlyUsedRegions">
@@ -14,8 +13,5 @@
         <option value="us-east-1" />
       </list>
     </option>
-  </component>
-  <component name="explorerToolWindow">
-    <option name="selectedTab" value="Explorer" />
   </component>
 </project>

@@ -1,13 +1,18 @@
 import json
 import uuid
-from utils import get_connection
-from utils import authorized
+
+try:
+    from utils import get_connection, authorized
+except ImportError:
+    from .utils import get_connection, authorized
 
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """
     id_project CHAR(36) NOT NULL ,
@@ -44,6 +49,7 @@ def lambda_handler(event, context):
             'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
+
 
 def insert_project(id_project, name_project, description, active):
     connection = get_connection()

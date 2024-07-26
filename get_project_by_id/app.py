@@ -1,12 +1,18 @@
 import json
-from utils import get_connection
-from utils import authorized
+import uuid
+
+try:
+    from utils import get_connection, authorized
+except ImportError:
+    from .utils import get_connection, authorized
 
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -25,9 +31,17 @@ def lambda_handler(event, context):
                 'headers': headers_open,
                 'body': json.dumps({'message': 'Unauthorized'})
             }
+        if "id_project" not in event["queryStringParameters"] or not event["queryStringParameters"]["id_project"]:
+            return {
+                'statusCode': 400,
+                'headers': headers_open,
+                'body': json.dumps({'message': 'id_project is required and must be a valid uuid'})
+            }
         id_project = event["queryStringParameters"]["id_project"]
 
-        if not id_project and id_project.length() != 36:
+        try:
+            uuid.UUID(id_project)
+        except ValueError:
             return {
                 'statusCode': 400,
                 'headers': headers_open,
@@ -41,13 +55,14 @@ def lambda_handler(event, context):
         connection.close()
 
         projects2 = []
-        for project in projects:
-            projects.append({
-                "id_project": project[0],
-                "name_project": project[1],
-                "description": project[2],
-                "active": project[3]
-            })
+        if projects:
+            for project in projects:
+                projects2.append({
+                    "id_project": project[0],
+                    "name_project": project[1],
+                    "description": project[2],
+                    "active": project[3]
+                })
 
         return {
             "statusCode": 200,
@@ -60,4 +75,3 @@ def lambda_handler(event, context):
             'headers': headers_open,
             'body': json.dumps({'message': str(e)})
         }
-

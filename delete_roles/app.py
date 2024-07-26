@@ -1,11 +1,16 @@
 import json
-from utils import get_connection
-from utils import authorized
+
+try:
+    from utils import get_connection, authorized
+except ImportError:
+    from .utils import get_connection, authorized
 headers_open = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    }
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+}
+
+
 def lambda_handler(event, context):
     """Sample pure Lambda function
 
@@ -37,6 +42,7 @@ def lambda_handler(event, context):
             'body': json.dumps({'message': str(e)})
         }
 
+
 def is_active_role(id_rol):
     connection = get_connection()
     cursor = connection.cursor()
@@ -45,6 +51,7 @@ def is_active_role(id_rol):
     cursor.close()
     connection.close()
     return active[0]
+
 
 def delete_role(id_rol):
     if not is_active_role(id_rol):

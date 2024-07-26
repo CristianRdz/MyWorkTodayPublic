@@ -1,7 +1,11 @@
 import json
 import boto3
 from botocore.exceptions import ClientError
-from utils import get_secret
+
+try:
+    from utils import get_secret
+except ImportError:
+    from .utils import get_secret
 
 headers_open = {
     'Access-Control-Allow-Origin': '*',

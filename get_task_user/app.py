@@ -1,7 +1,9 @@
 import json
-from utils import get_connection
-from utils import authorized
-from utils import get_jwt_claims
+
+try:
+    from utils import get_connection, authorized, get_jwt_claims
+except ImportError:
+    from .utils import get_connection, authorized, get_jwt_claims
 
 headers_open = {
     'Access-Control-Allow-Origin': '*',

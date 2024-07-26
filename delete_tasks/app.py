@@ -1,6 +1,8 @@
 import json
-from utils import get_connection
-from utils import authorized
+try:
+    from utils import get_connection, authorized
+except ImportError:
+    from .utils import get_connection, authorized
 
 headers_open = {
     'Access-Control-Allow-Origin': '*',
