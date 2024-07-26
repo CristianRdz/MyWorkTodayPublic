@@ -4,6 +4,7 @@ import re
 import random
 import string
 import boto3
+import secrets
 from botocore.exceptions import ClientError
 try:
     from utils import get_connection, authorized
@@ -122,7 +123,7 @@ def generate_temporary_password(length=12):
 
     while True:
         # Genera una contraseña aleatoria
-        password = ''.join(random.choice(characters) for _ in range(length))
+        password = ''.join(secrets.choice(characters) for _ in range(length))
 
         # Verifica los criterios
         has_digit = any(char.isdigit() for char in password)
