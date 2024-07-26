@@ -1,6 +1,7 @@
 import json
 import unittest
 from unittest.mock import patch, MagicMock
+
 from delete_users.app import lambda_handler, is_active_user, get_user_email, delete_user, disable_cognito_user, headers_open
 from delete_users.utils import get_secret, get_connection, get_jwt_claims, authorized
 
@@ -81,12 +82,16 @@ class TestDeleteUsers(unittest.TestCase):
 
     @patch('delete_users.app.is_active_user')
     @patch('delete_users.app.get_connection')
-    def test_delete_user(self, mock_get_connection, mock_is_active_user):
+    @patch('boto3.client')
+    def test_delete_user(self, mock_boto3_client, mock_get_connection, mock_is_active_user):
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
         mock_get_connection.return_value = mock_connection
         mock_connection.cursor.return_value = mock_cursor
         mock_is_active_user.return_value = 1
+
+        # Mock the admin_disable_user method of the boto3 client
+        mock_boto3_client.return_value.admin_disable_user.return_value = {}
 
         response = delete_user("123456789012345678901234567890123456")
 
@@ -97,6 +102,10 @@ class TestDeleteUsers(unittest.TestCase):
                                             ("123456789012345678901234567890123456",))
         mock_cursor.close.assert_any_call()
         mock_connection.close.assert_any_call()
+
+        # Assert that the boto3 client was called with the correct arguments
+        mock_boto3_client.assert_called_once_with('cognito-idp')
+        mock_boto3_client.return_value.admin_disable_user.assert_called_once()
     @patch('boto3.session.Session')
     def test_get_secret(self, mock_session):
         mock_client = MagicMock()
