@@ -73,6 +73,21 @@ Resources:
                   - cognito-idp:AdminUserGlobalSignOut
                 Resource: 'arn:aws:cognito-idp:us-east-1:*:*'
 
+  MyWorkTodayImagesS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: myworktoday-images
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - "*"
+
+
   MyCognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
