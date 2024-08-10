@@ -95,6 +95,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: myworktoday-images
+
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
@@ -103,6 +104,17 @@ Resources:
               - GET
             AllowedOrigins:
               - "*"
+  MyWorkTodayImagesS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MyWorkTodayImagesS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub "arn:aws:s3:::${MyWorkTodayImagesS3Bucket}/*"
 
 
   MyCognitoUserPool:
