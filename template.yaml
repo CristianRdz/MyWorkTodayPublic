@@ -105,8 +105,6 @@ Resources:
                   - s3:CreateBucketPolicy
                 Resource: arn:aws:s3:::*
 
-
-
   MyWorkTodayImagesS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
