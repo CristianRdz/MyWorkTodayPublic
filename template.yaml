@@ -72,12 +72,29 @@ Resources:
                   - cognito-idp:AdminUpdateAuthEventFeedback
                   - cognito-idp:AdminUserGlobalSignOut
                 Resource: 'arn:aws:cognito-idp:us-east-1:*:*'
+        - PolicyName: S3CreateBucketPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                  - s3:PutBucketCors
+                  - s3:GetBucketCors
+                  - s3:DeleteBucketCors
+                  - s3:PutBucketWebsite
+                Resource: arn:aws:s3:::*
+
 
   MyWorkTodayImagesS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: myworktoday-images
-      AccessControl: PublicRead
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
