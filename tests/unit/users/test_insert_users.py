@@ -37,7 +37,7 @@ class TestInsertUsers(unittest.TestCase):
             'body': json.dumps({
                 'full_name': 'User 1',
                 'email': 'user1@example.com',
-                'fk_rol': 'b2345c67-d890-1e23-fg45-678901bc2de3'
+                'fk_rol': '1',
             })
         }
         context = {}
@@ -69,13 +69,13 @@ class TestInsertUsers(unittest.TestCase):
         mock_get_connection.return_value = mock_connection
         mock_connection.cursor.return_value = mock_cursor
 
-        response = insert_user("1", "User 1", "user1@example.com", "password", True, "b2345c67-d890-1e23-fg45-678901bc2de3")
+        response = insert_user("1", "User 1", "user1@example.com", "password", True, "1")
 
         self.assertEqual(response['statusCode'], 200)
         self.assertEqual(response['body'], json.dumps({'message': 'User inserted successfully with id: 1'}))
         mock_cursor.execute.assert_called_once_with(
             "INSERT INTO users (id_user, full_name, email, password, active, fk_rol) VALUES (%s, %s, %s, %s, %s, %s)",
-            ("1", "User 1", "user1@example.com", "password", True, "b2345c67-d890-1e23-fg45-678901bc2de3")
+            ("1", "User 1", "user1@example.com", "password", True, "1")
         )
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()

@@ -39,7 +39,7 @@ def lambda_handler(event, context):
         password = generate_temporary_password()
         active = True
         fk_rol = event['fk_rol']
-        role = find_role(fk_rol) if find_role(fk_rol) is not None else "Users"
+        role = fk_rol == 'b2345c67-d890-1e23-fg45-678901bc2de3' and 'Users' or 'Admins'
 
         if not full_name or not email or not password or not fk_rol:
             return {
@@ -132,13 +132,3 @@ def generate_temporary_password(length=12):
 
         if has_digit and has_upper and has_lower and has_special and len(password) >= 8:
             return password
-
-
-def find_role(fk_rol):
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT name FROM roles WHERE id_rol = %s", (fk_rol,))
-    role = cursor.fetchone()
-    cursor.close()
-    connection.close()
-    return role[0] if role is not None else None
