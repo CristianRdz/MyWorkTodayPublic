@@ -37,7 +37,7 @@ class TestInsertUsers(unittest.TestCase):
             'body': json.dumps({
                 'full_name': 'User 1',
                 'email': 'user1@example.com',
-                'fk_rol': '1',
+                'fk_rol': 'b2345c67-d890-1e23-fg45-678901bc2de3',
             })
         }
         context = {}
