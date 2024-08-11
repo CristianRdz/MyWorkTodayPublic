@@ -85,7 +85,6 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: myworktoday-images
-      AccessControl: PublicRead  # Allow anyone to read objects in the bucket
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false      # Allow setting public ACLs
         BlockPublicPolicy: false     # Allow using bucket policies for public access
