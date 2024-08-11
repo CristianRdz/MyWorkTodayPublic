@@ -39,7 +39,7 @@ def lambda_handler(event, context):
         password = generate_temporary_password()
         active = True
         fk_rol = event['fk_rol']
-        role = fk_rol == 'b2345c67-d890-1e23-fg45-678901bc2de3' and 'Users' or 'Admins'
+        role = "Users"
 
         if not full_name or not email or not password or not fk_rol:
             return {
