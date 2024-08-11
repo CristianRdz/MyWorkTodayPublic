@@ -86,10 +86,10 @@ Resources:
     Properties:
       BucketName: myworktoday-images
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: false      # Allow setting public ACLs
-        BlockPublicPolicy: false     # Allow using bucket policies for public access
-        IgnorePublicAcls: false     # Honor public ACLs
-        RestrictPublicBuckets: false  # Allow public access configurations
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
@@ -98,6 +98,19 @@ Resources:
               - GET
             AllowedOrigins:
               - "*"
+
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MyWorkTodayImagesS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: arn:aws:s3:::myworktoday-images/images/*
 
 
   MyCognitoUserPool:
