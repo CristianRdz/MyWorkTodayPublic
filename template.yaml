@@ -1066,7 +1066,8 @@ Outputs:
     Value: !GetAtt RDSInstance.Endpoint.Address
   RDSPassword:
     Description: Password for the RDS instance
-    Value: !Ref RDSSecret.SecretValue
+    # Use Fn::GetAtt to retrieve the secret value
+    Value: !GetAtt [ RDSSecret, SecretValue ]
   InsertProjectApiUrl:
     Description: "API Gateway endpoint URL for InsertProjectFunction"
     Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_project"
