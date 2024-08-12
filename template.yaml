@@ -187,9 +187,10 @@ Resources:
     Properties:
       Name: !Sub "${AWS::StackName}-Secret"
       GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: "password"
         PasswordLength: 20
-        ExcludeCharacters: '"@/\'
-        GenerateStringKey: SecretValue
+        ExcludeCharacters: '"@/\\'
 
   MyWorkTodayImagesS3Bucket:
     Type: AWS::S3::Bucket
