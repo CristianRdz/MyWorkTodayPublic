@@ -114,6 +114,30 @@ Resources:
         - Key: Name
           Value: !Sub "${AWS::StackName}-VPC"
 
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-InternetGateway"
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-PublicRouteTable"
+    Routes:
+      - DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref InternetGateway
+
   SubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -147,6 +171,19 @@ Resources:
         - Key: Name
           Value: !Sub "${AWS::StackName}-PublicSubnet2"
 
+  # Associate Subnets with the Route Table
+  Subnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  Subnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -170,6 +207,7 @@ Resources:
       Engine: MySQL
       EngineVersion: '8.0.35'
       MasterUsername: admin
+      # Provide the secret reference directly
       MasterUserPassword: !Ref RDSSecret
       DBSubnetGroupName: !Ref SubnetGroup
       VPCSecurityGroups:
