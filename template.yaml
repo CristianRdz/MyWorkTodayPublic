@@ -206,6 +206,16 @@ Resources:
         - Key: Name
           Value: !Sub "${AWS::StackName}-SecurityGroup"
 
+  RDSSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${AWS::StackName}-Secret"
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: "password"
+        PasswordLength: 20
+        ExcludeCharacters: '"@/\\'
+
   RDSInstance:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -215,7 +225,9 @@ Resources:
       Engine: MySQL
       EngineVersion: '8.0.35'
       MasterUsername: admin
-      MasterUserPassword: !GetAtt [ RDSSecret, SecretValue ]
+      MasterUserPassword: !Sub
+        - '{{resolve:secretsmanager:${Secret}:SecretString:password}}'
+        - Secret: !Ref RDSSecret
       DBSubnetGroupName: !Ref SubnetGroup
       VPCSecurityGroups:
         - !Ref SecurityGroup
@@ -226,15 +238,7 @@ Resources:
           Value: !Sub "${AWS::StackName}-Instance"
       DeletionProtection: false
 
-  RDSSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: !Sub "${AWS::StackName}-Secret"
-      GenerateSecretString:
-        SecretStringTemplate: '{"username": "admin"}'
-        GenerateStringKey: "password"
-        PasswordLength: 20
-        ExcludeCharacters: '"@/\\'
+
 
   MyWorkTodayImagesS3Bucket:
     Type: AWS::S3::Bucket
@@ -1112,7 +1116,7 @@ Outputs:
   RDSPassword:
     Description: Password for the RDS instance
     # Use Fn::GetAtt to retrieve the secret value
-    Value: !GetAtt [ RDSSecret, SecretValue ]
+    Value: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
   InsertProjectApiUrl:
     Description: "API Gateway endpoint URL for InsertProjectFunction"
     Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_project"
