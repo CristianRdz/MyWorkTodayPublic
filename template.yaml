@@ -243,7 +243,7 @@ Resources:
               "POOL_ID": "${MyCognitoUserPool}"
             }
           - GeneratedPassword: '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
-        GenerateStringKey: "password"
+        GenerateStringKey: "alternatePassword"
         PasswordLength: 20
         ExcludeCharacters: '"@/\\'
 
