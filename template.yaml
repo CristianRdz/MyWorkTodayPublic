@@ -226,27 +226,6 @@ Resources:
         PasswordLength: 20
         ExcludeCharacters: '"@/\\'
 
-  MyWorkTodaySecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: !Sub "${AWS::StackName}-Secret2"
-      GenerateSecretString:
-        SecretStringTemplate: !Sub
-          - |
-            {
-              "DB_HOST": "${RDSInstance.Endpoint.Address}",
-              "DB_USER": "admin",
-              "DB_PASSWORD": "${GeneratedPassword}",
-              "DB_NAME": "MyWorkToday",
-              "DB_PORT": "3306",
-              "CLIENT_ID": "${MyCognitoUserPoolClient.ClientId}",
-              "POOL_ID": "${MyCognitoUserPool}"
-            }
-          - GeneratedPassword: '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
-        GenerateStringKey: "password"
-        PasswordLength: 20
-        ExcludeCharacters: '"@/\\'
-
   RDSInstance:
     Type: AWS::RDS::DBInstance
     Properties:
