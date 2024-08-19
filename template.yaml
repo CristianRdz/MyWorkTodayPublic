@@ -229,7 +229,7 @@ Resources:
   MyWorkTodaySecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "prod/myworktodaybd1"
+      Name: !Sub "prod/myworktodaybds"
       GenerateSecretString:
         SecretStringTemplate: !Sub
           - |
@@ -243,7 +243,7 @@ Resources:
               "POOL_ID": "${MyCognitoUserPool}"
             }
           - GeneratedPassword: '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
-        GenerateStringKey: "alternatePassword"
+        GenerateStringKey: "password"
         PasswordLength: 20
         ExcludeCharacters: '"@/\\'
 
