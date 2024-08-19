@@ -71,6 +71,16 @@ Resources:
                   - cognito-idp:AdminSetUserSettings
                   - cognito-idp:AdminUpdateAuthEventFeedback
                   - cognito-idp:AdminUserGlobalSignOut
+                  - cognito-idp:CreateUserPool
+                  - cognito-idp:CreateUserPoolClient
+                  - cognito-idp:CreateUserPoolDomain
+                  - cognito-idp:DeleteUserPool
+                  - cognito-idp:DeleteUserPoolClient
+                  - cognito-idp:DeleteUserPoolDomain
+                  - cognito-idp:DescribeUserPool
+                  - cognito-idp:DescribeUserPoolClient
+                  - cognito-idp:ForgetDevice
+                  - cognito-idp:ListDevices
                 Resource: 'arn:aws:cognito-idp:us-east-1:*:*'
         - PolicyName: S3FullAccess
           PolicyDocument:
@@ -216,6 +226,25 @@ Resources:
         PasswordLength: 20
         ExcludeCharacters: '"@/\\'
 
+  MyWorkTodaySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "prod/myworktodaybd1"
+      GenerateSecretString:
+        SecretStringTemplate: |
+          {
+            "DB_HOST": "${RDSInstance.Endpoint.Address}",
+            "DB_USER": "admin", 
+            "DB_PASSWORD": "<DB_PASSWORD>",
+            "DB_NAME": "MyWorkToday", 
+            "DB_PORT": "3306", 
+            "CLIENT_ID": "${MyCognitoUserPoolClient.ClientId}", 
+            "POOL_ID": "${MyCognitoUserPool.Id}"
+          }
+        GenerateStringKey: DB_PASSWORD
+        PasswordLength: 20
+        ExcludeCharacters: '"@/\\'
+
   RDSInstance:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -303,7 +332,37 @@ Resources:
       Precedence: 2
 
 
-
+  MyCognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref MyCognitoUserPool
+      ClientName: MyUserPoolClient
+      AccessTokenValidity: 60  # Access token validity in minutes
+      RefreshTokenValidity: 43200 # Refresh token validity in minutes
+      IdTokenValidity: 60 # ID token validity in minutes
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+      CallbackURLs:
+        - 'https://master.d4uu5iaakjxgl.amplifyapp.com/home/inicio' # Replace with your frontend callback URL
+      LogoutURLs:
+        - 'https://master.d4uu5iaakjxgl.amplifyapp.com/home/inicio'  # Replace with your frontend logout URL
+      ReadAttributes:
+        - email
+        - given_name
+        - family_name
+      WriteAttributes:
+        - email
+        - given_name
+        - family_name
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      GenerateSecret: false # Set to true if you need a client secret
 
   AuthApi:
     Type: AWS::Serverless::Api
@@ -1113,10 +1172,6 @@ Outputs:
   RDSEndpoint:
     Description: Endpoint of the RDS instance
     Value: !GetAtt RDSInstance.Endpoint.Address
-  RDSPassword:
-    Description: Password for the RDS instance
-    # Use Fn::GetAtt to retrieve the secret value
-    Value: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
   InsertProjectApiUrl:
     Description: "API Gateway endpoint URL for InsertProjectFunction"
     Value: !Sub "https://${ProjectApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/insert_project"
