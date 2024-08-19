@@ -339,8 +339,6 @@ Resources:
     Properties:
       UserPoolId: !Ref MyCognitoUserPool
       ClientName: MyUserPoolClient
-      AccessTokenValidity: 60  # Access token validity in minutes
-      IdTokenValidity: 60 # ID token validity in minutes
       AllowedOAuthFlows:
         - code
         - implicit
