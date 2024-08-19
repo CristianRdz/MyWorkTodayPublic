@@ -231,17 +231,19 @@ Resources:
     Properties:
       Name: !Sub "prod/myworktodaybd1"
       GenerateSecretString:
-        SecretStringTemplate: |
-          {
-            "DB_HOST": "${RDSInstance.Endpoint.Address}",
-            "DB_USER": "admin", 
-            "DB_PASSWORD": "<DB_PASSWORD>",
-            "DB_NAME": "MyWorkToday", 
-            "DB_PORT": "3306", 
-            "CLIENT_ID": "${MyCognitoUserPoolClient.ClientId}", 
-            "POOL_ID": "${MyCognitoUserPool.Id}"
-          }
-        GenerateStringKey: DB_PASSWORD
+        SecretStringTemplate: !Sub
+          - |
+            {
+              "DB_HOST": "${RDSInstance.Endpoint.Address}",
+              "DB_USER": "admin", 
+              "DB_PASSWORD": "${GeneratedPassword}",
+              "DB_NAME": "MyWorkToday", 
+              "DB_PORT": "3306", 
+              "CLIENT_ID": "${MyCognitoUserPoolClient.ClientId}", 
+              "POOL_ID": "${MyCognitoUserPool.Id}"
+            }
+          - GeneratedPassword: '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
+        GenerateStringKey: "password"
         PasswordLength: 20
         ExcludeCharacters: '"@/\\'
 
@@ -338,7 +340,6 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       ClientName: MyUserPoolClient
       AccessTokenValidity: 60  # Access token validity in minutes
-      RefreshTokenValidity: 43200 # Refresh token validity in minutes
       IdTokenValidity: 60 # ID token validity in minutes
       AllowedOAuthFlows:
         - code
