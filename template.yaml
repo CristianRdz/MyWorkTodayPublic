@@ -235,12 +235,12 @@ Resources:
           - |
             {
               "DB_HOST": "${RDSInstance.Endpoint.Address}",
-              "DB_USER": "admin", 
+              "DB_USER": "admin",
               "DB_PASSWORD": "${GeneratedPassword}",
-              "DB_NAME": "MyWorkToday", 
-              "DB_PORT": "3306", 
-              "CLIENT_ID": "${MyCognitoUserPoolClient.ClientId}", 
-              "POOL_ID": "${MyCognitoUserPool.Id}"
+              "DB_NAME": "MyWorkToday",
+              "DB_PORT": "3306",
+              "CLIENT_ID": "${MyCognitoUserPoolClient.ClientId}",
+              "POOL_ID": "${MyCognitoUserPool}"
             }
           - GeneratedPassword: '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
         GenerateStringKey: "password"
