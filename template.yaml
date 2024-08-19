@@ -229,7 +229,7 @@ Resources:
   MyWorkTodaySecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "prod/myworktodaybds"
+      Name: !Sub "${AWS::StackName}-Secret2"
       GenerateSecretString:
         SecretStringTemplate: !Sub
           - |
