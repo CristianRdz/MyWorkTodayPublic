@@ -65,7 +65,7 @@ def lambda_handler(event, context):
             Username=email,
             UserAttributes=[
                 {'Name': 'email', 'Value': email},
-                {'Name': 'email_verified', 'Value': 'false'},
+                {'Name': 'email_verified', 'Value': 'true'},
             ],
             TemporaryPassword=password
         )
